@@ -63,12 +63,11 @@ public class Main extends Application {
                 actiontarget.setText("Sign in button pressed");
             }
         });
-
-
+        
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
-        grid.add(hbBtn, 1, 4);
+        //grid.add(hbBtn, 1, 4);
 
         //grid.setGridLinesVisible(true);
         Scene scene = new Scene(grid, 300, 275);
