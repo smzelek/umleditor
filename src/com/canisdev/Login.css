@@ -1,0 +1,13 @@
+/*.root {
+    -fx-background-image: url("img.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: bottom;
+}
+*/
+.root {
+    -fx-border-image-source: url("img.jpg");
+    -fx-border-image-insets: 0;
+    -fx-border-image-repeat: stretch;
+    -fx-border-image-width: 20;
+    -fx-border-image-slice: 25;
+}
