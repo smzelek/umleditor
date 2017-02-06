@@ -5,10 +5,11 @@ menu-item
 */
 
 .menu-bar {
-
+    -fx-background-color:black;
 }
 
 .menu-button {
+    -fx-fill:white;
 }
 
 .menu-button:hover {
