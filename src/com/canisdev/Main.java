@@ -5,6 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -20,20 +22,26 @@ public class Main extends Application {
     public void start(Stage primaryStage){
         primaryStage.setTitle("CANIS UML Editor 1.0");
 
+        Image newFileIcon = new Image(getClass().getResourceAsStream("newfileicon.png"));
+        ImageView newFileView = new ImageView(newFileIcon);
+        newFileView.setFitHeight(15);
+        newFileView.setFitWidth(15);
+
         VBox vBox = new VBox();
 
         MenuBar menuBar = new MenuBar();
 
-        Menu menuFile = new Menu("File");
+        Menu fileButton = new Menu("File");
         //new, open, save, settings, exit
         MenuItem newFile = new MenuItem("New");
 
-        menuFile.getItems().addAll(newFile);
+        newFile.setGraphic(newFileView);
+        fileButton.getItems().addAll(newFile);
 
         Menu menuEdit = new Menu("Edit");
         Menu menuView = new Menu("View");
 
-        menuBar.getMenus().addAll(menuFile, menuEdit, menuView);
+        menuBar.getMenus().addAll(fileButton, menuEdit, menuView);
         vBox.getChildren().addAll(menuBar);
 
         Scene scene = new Scene (vBox, 400,450);

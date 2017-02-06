@@ -1,23 +1,20 @@
+/*menu hierarchy:
+menu-bar
+menu-button
+menu-item
+*/
+
 .menu-bar {
-    -fx-background-color: yellow;
-    -fx-border-color: black;
-    -fx-border-width: 10px;
-    -fx-padding: 25px;
-    -fx-margin: 25px;
 }
 
 .menu-button {
-    -fx-background-color:green;
 }
 
 .menu-button:hover {
-    -fx-background-color:white;
 }
 
 .menu-button .label {
-    -fx-text-fill: blue;
 }
 
 .menu-item .label {
-    -fx-text-fill: red;
 }
