@@ -1,0 +1,20 @@
+/*menu hierarchy:
+menu-bar
+menu-button
+menu-item
+*/
+
+.menu-bar {
+}
+
+.menu-button {
+}
+
+.menu-button:hover {
+}
+
+.menu-button .label {
+}
+
+.menu-item .label {
+}
