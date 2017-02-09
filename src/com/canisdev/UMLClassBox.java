@@ -5,7 +5,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
@@ -22,18 +21,24 @@ public class UMLClassBox extends VBox {
     private double lastMousePosY;
 
     private final double RESIZE_MARGIN = 5;
-    private boolean resizing_top = false;
-    private boolean resizing_right = false;
-    private boolean resizing_bottom = false;
-    private boolean resizing_left = false;
+    private boolean resizing_top;
+    private boolean resizing_right;
+    private boolean resizing_bottom;
+    private boolean resizing_left;
+    public boolean isSelected;
 
     //TODO: tab goes to next text object? (modular)
-    //TODO: indicate which box is focused
-    //          -add border, only allow resize on focused box?
-
+    //TODO: better focus indication
+    //TODO: fix states of de/focusing, mouse events
 
     public UMLClassBox (double width, double height){
         super();
+
+        resizing_top = false;
+        resizing_right = false;
+        resizing_bottom = false;
+        resizing_left = false;
+        setSelected(true);
 
         setStyle("-fx-background-color: #C0C0C0; -fx-border-style: solid; -fx-border-width: 1px; -fx-border-color: black;");
         setPadding(new Insets(35 + RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN));
@@ -43,13 +48,28 @@ public class UMLClassBox extends VBox {
         nameArea.setPromptText("Name");
         nameArea.setCache(false);
 
+        nameArea.setOnMouseClicked((mouseEvent)-> {
+            toFront();
+            ((UMLArea) getParent()).clearSelections();
+        });
+
         attributeArea = new TextArea();
         attributeArea.setPromptText("Attributes");
         attributeArea.setCache(false);
 
+        attributeArea.setOnMouseClicked((mouseEvent)-> {
+            toFront();
+            ((UMLArea) getParent()).clearSelections();
+        });
+
         methodArea = new TextArea();
         methodArea.setPromptText("Methods");
         methodArea.setCache(false);
+
+        methodArea.setOnMouseClicked((mouseEvent)-> {
+            toFront();
+            ((UMLArea) getParent()).clearSelections();
+        });
 
         setMaxSize(width, height);
         setMinSize(width, height);
@@ -57,16 +77,6 @@ public class UMLClassBox extends VBox {
         setFillWidth(true);
         getChildren().addAll(nameArea, attributeArea, methodArea);
 
-        requestFocus();
-
-        setOnKeyReleased((keyEvent) -> {
-            if (isFocused()){
-                if (keyEvent.getCode() == KeyCode.DELETE || keyEvent.getCode() == KeyCode.BACK_SPACE){
-                    ((UMLArea)getParent()).getChildren().remove(this);
-                    //TODO: bug? can delete while resizing
-                }
-            }
-        });
         setOnMouseMoved((mouseEvent) -> {
             setInResizingArea(mouseEvent);
         });
@@ -77,7 +87,10 @@ public class UMLClassBox extends VBox {
             setResizing(mouseEvent);
             toFront();
 
-            requestFocus();
+            ((UMLArea) getParent()).clearSelections();
+            setSelected(true);
+
+            mouseEvent.consume();
         });
 
         setOnMouseReleased((mouseEvent) -> {
@@ -85,6 +98,7 @@ public class UMLClassBox extends VBox {
             resizing_top = false;
             resizing_right = false;
             resizing_bottom = false;
+            mouseEvent.consume();
         });
 
         setOnMouseDragged((mouseEvent) -> {
@@ -154,17 +168,29 @@ public class UMLClassBox extends VBox {
             //if not doing a resize, do a translate
             if (!(resizing_bottom || resizing_left || resizing_right || resizing_top))
             {
+                setCursor(Cursor.MOVE);
                 setTranslateX(getTranslateX() + offsetX);
                 setTranslateY(getTranslateY() + offsetY);
             }
 
             lastMousePosX = mouseEvent.getSceneX();
             lastMousePosY = mouseEvent.getSceneY();
+            mouseEvent.consume();
         });
 
         setOnMouseReleased((mouseEvent) -> {
-                setCursor(Cursor.DEFAULT);
+            setCursor(Cursor.DEFAULT);
+            mouseEvent.consume();
         });
+    }
+
+    public void setSelected (boolean state){
+        isSelected = state;
+        if (state){
+            setStyle("-fx-background-color: #C0C0C0; -fx-border-style: solid; -fx-border-width: 1px; -fx-border-color: red;");
+        }else{
+            setStyle("-fx-background-color: #C0C0C0; -fx-border-style: solid; -fx-border-width: 1px; -fx-border-color: black;");
+        }
     }
 
     boolean inBottomMargin(MouseEvent mouseEvent){
@@ -206,7 +232,7 @@ public class UMLClassBox extends VBox {
         }else if (inRightMargin(mouseEvent)){
             setCursor(Cursor.E_RESIZE);
         }else {
-            setCursor(Cursor.MOVE);
+            setCursor(Cursor.DEFAULT);
         }
     }
 

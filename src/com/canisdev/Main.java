@@ -21,7 +21,7 @@ public class Main extends Application {
 
     private Scene scene;
 
-    //TODO: when I add the arrows
+    //TODO: when we add the arrows
     //there will be a canvas with the arrow images
     //and nodes on an overlay that correspond to the arrows, etc
     //this will all be in the UMLArea
@@ -63,6 +63,6 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-	    launch(args);
+        launch(args);
     }
 }
