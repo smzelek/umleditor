@@ -24,12 +24,14 @@ public class UMLArea extends Pane {
             if (keyEvent.getCode() == KeyCode.DELETE || keyEvent.getCode() == KeyCode.BACK_SPACE){
 
                 ArrayList<Node> children = new ArrayList<>(getChildren());
+
                 for (Node n : children){
-                    if (((UMLClassBox) n).isSelected)
+                    if (((UMLClassBox) n).isSelected) {
                         getChildren().remove(n);
+                        requestFocus();
+                    }
                 }
 
-                requestFocus();
                 //TODO: bug? can delete while resizing
             }
         });
