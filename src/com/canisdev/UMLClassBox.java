@@ -1,106 +1,217 @@
 package com.canisdev;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.shape.Circle;
 
 /**
  * Created by steve on 2/7/2017.
  */
-public class UMLClassBox extends VBox {
+public class UMLClassBox extends StackPane {
 
+    private VBox contents;
     private TextField nameArea;
     private TextArea attributeArea;
     private TextArea methodArea;
+    private ResizeNode right, left, topRight, bottomRight, topLeft, bottomLeft, top, bottom;
 
     private double lastMousePosX;
     private double lastMousePosY;
-
+    private final double SIDE_MARGIN = 2;
     private final double RESIZE_MARGIN = 5;
-    private boolean resizing_top;
-    private boolean resizing_right;
-    private boolean resizing_bottom;
-    private boolean resizing_left;
     public boolean isSelected;
 
-    //TODO: tab goes to next text object? (modular)
-    //TODO: better focus indication
     //TODO: fix states of de/focusing, mouse events
+    //fix resizing
 
-    public UMLClassBox (double width, double height){
+    public UMLClassBox(double width, double height){
         super();
 
-        resizing_top = false;
-        resizing_right = false;
-        resizing_bottom = false;
-        resizing_left = false;
-        setSelected(true);
-
-        setStyle("-fx-background-color: #C0C0C0; -fx-border-style: solid; -fx-border-width: 1px; -fx-border-color: black;");
-        setPadding(new Insets(35 + RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN));
-        setAlignment(Pos.CENTER);
+        width += (SIDE_MARGIN+RESIZE_MARGIN)*2;
+        height += (SIDE_MARGIN+RESIZE_MARGIN)*2;
 
         nameArea = new TextField();
         nameArea.setPromptText("Name");
-        nameArea.setCache(false);
-
-        nameArea.setOnMouseClicked((mouseEvent)-> {
-            toFront();
-            ((UMLArea) getParent()).clearSelections();
-        });
+        nameArea.setAlignment(Pos.TOP_CENTER);
+        nameArea.setPrefHeight(25);
 
         attributeArea = new TextArea();
         attributeArea.setPromptText("Attributes");
-        attributeArea.setCache(false);
-
-        attributeArea.setOnMouseClicked((mouseEvent)-> {
-            toFront();
-            ((UMLArea) getParent()).clearSelections();
-        });
+        attributeArea.setPrefHeight(80);
 
         methodArea = new TextArea();
         methodArea.setPromptText("Methods");
-        methodArea.setCache(false);
+        methodArea.setPrefHeight(80);
+
+        contents = new VBox();
+        contents.setId("uml-class-box-contents");
+        contents.setPadding(new Insets(SIDE_MARGIN));
+        contents.setVgrow(nameArea, Priority.NEVER);
+        contents.setVgrow(methodArea, Priority.ALWAYS);
+        contents.setVgrow(attributeArea, Priority.ALWAYS);
+        contents.getChildren().addAll(nameArea,attributeArea,methodArea);
+
+        topLeft = new ResizeNode();
+        setAlignment(topLeft, Pos.TOP_LEFT);
+        top = new ResizeNode();
+        setAlignment(top, Pos.TOP_CENTER);
+        topRight = new ResizeNode();
+        setAlignment(topRight, Pos.TOP_RIGHT);
+        right = new ResizeNode();
+        setAlignment(right, Pos.CENTER_RIGHT);
+        bottomRight = new ResizeNode();
+        setAlignment(bottomRight, Pos.BOTTOM_RIGHT);
+        bottom = new ResizeNode();
+        setAlignment(bottom, Pos.BOTTOM_CENTER);
+        bottomLeft = new ResizeNode();
+        setAlignment(bottomLeft, Pos.BOTTOM_LEFT);
+        left = new ResizeNode();
+        setAlignment(left, Pos.CENTER_LEFT);
+
+        getChildren().addAll(contents);
+        getChildren().addAll(topLeft, top, topRight, right, bottomRight, bottom, bottomLeft, left);
+        setAlignment(contents, Pos.CENTER);
+        setMargin(contents, new Insets(RESIZE_MARGIN));
+        setId("uml-class-box-frame");
+        setMaxSize(width, height);
+        setMinSize(width, height);
+
+        setSelected(true);
+
+        //*********************************************************************
+        //Mouse handlers for contents box
+
+        nameArea.setOnKeyPressed((keyEvent) -> {
+            if (keyEvent.getCode() == KeyCode.TAB){
+                if (keyEvent.isShiftDown()){
+                    methodArea.requestFocus();
+                }else{
+                    attributeArea.requestFocus();
+                }
+                keyEvent.consume();
+            }
+        });
+        nameArea.setOnMouseClicked((mouseEvent)-> {
+            toFront();
+            ((UMLArea) getParent()).clearSelections();
+            mouseEvent.consume();
+        });
+
+        attributeArea.setOnKeyPressed((keyEvent) -> {
+            if (keyEvent.getCode() == KeyCode.TAB){
+                if (keyEvent.isShiftDown()){
+                    nameArea.requestFocus();
+                }else{
+                    methodArea.requestFocus();
+                }
+                keyEvent.consume();
+            }
+        });
+        attributeArea.setOnMouseClicked((mouseEvent)-> {
+            toFront();
+            ((UMLArea) getParent()).clearSelections();
+            attributeArea.home();
+            mouseEvent.consume();
+        });
+
+
+        methodArea.setOnKeyPressed((keyEvent) -> {
+            if (keyEvent.getCode() == KeyCode.TAB){
+                if (keyEvent.isShiftDown()){
+                    attributeArea.requestFocus();
+                }else{
+                    nameArea.requestFocus();
+                }
+                keyEvent.consume();
+            }
+        });
 
         methodArea.setOnMouseClicked((mouseEvent)-> {
             toFront();
             ((UMLArea) getParent()).clearSelections();
+            methodArea.home();
+            mouseEvent.consume();
         });
 
-        setMaxSize(width, height);
-        setMinSize(width, height);
-
-        setFillWidth(true);
-        getChildren().addAll(nameArea, attributeArea, methodArea);
+        contents.setOnMouseMoved((mouseEvent) -> {
+            getScene().setCursor(Cursor.MOVE);
+            mouseEvent.consume();
+        });
 
         setOnMouseMoved((mouseEvent) -> {
-            setInResizingArea(mouseEvent);
+            getScene().setCursor(Cursor.MOVE);
+            mouseEvent.consume();
+        });
+
+        contents.setOnMousePressed((mouseEvent) -> {
+            lastMousePosX = mouseEvent.getSceneX();
+            lastMousePosY = mouseEvent.getSceneY();
+            ((UMLArea) getParent()).clearSelections();
+            setSelected(true);
+            toFront();
+
+            mouseEvent.consume();
+
         });
 
         setOnMousePressed((mouseEvent) -> {
             lastMousePosX = mouseEvent.getSceneX();
             lastMousePosY = mouseEvent.getSceneY();
-            setResizing(mouseEvent);
-            toFront();
-
             ((UMLArea) getParent()).clearSelections();
             setSelected(true);
+            toFront();
 
+            mouseEvent.consume();
+        });
+
+        contents.setOnMouseReleased((mouseEvent) -> {
+            getScene().setCursor(Cursor.DEFAULT);
             mouseEvent.consume();
         });
 
         setOnMouseReleased((mouseEvent) -> {
-            resizing_left = false;
-            resizing_top = false;
-            resizing_right = false;
-            resizing_bottom = false;
+            getScene().setCursor(Cursor.DEFAULT);
             mouseEvent.consume();
         });
 
+        setOnMouseDragged((mouseEvent) -> {
+            double offsetX = mouseEvent.getSceneX() - lastMousePosX;
+            double offsetY = mouseEvent.getSceneY() - lastMousePosY;
+
+            getScene().setCursor(Cursor.MOVE);
+            setTranslateX(getTranslateX() + offsetX);
+            setTranslateY(getTranslateY() + offsetY);
+
+            lastMousePosX = mouseEvent.getSceneX();
+            lastMousePosY = mouseEvent.getSceneY();
+            mouseEvent.consume();
+        });
+
+        contents.setOnMouseDragged((mouseEvent) -> {
+            double offsetX = mouseEvent.getSceneX() - lastMousePosX;
+            double offsetY = mouseEvent.getSceneY() - lastMousePosY;
+
+            getScene().setCursor(Cursor.MOVE);
+            setTranslateX(getTranslateX() + offsetX);
+            setTranslateY(getTranslateY() + offsetY);
+
+            lastMousePosX = mouseEvent.getSceneX();
+            lastMousePosY = mouseEvent.getSceneY();
+            mouseEvent.consume();
+        });
+
+        /*
         setOnMouseDragged((mouseEvent) -> {
             double offsetX = mouseEvent.getSceneX() - lastMousePosX;
             double offsetY = mouseEvent.getSceneY() - lastMousePosY;
@@ -182,65 +293,34 @@ public class UMLClassBox extends VBox {
             setCursor(Cursor.DEFAULT);
             mouseEvent.consume();
         });
+
+
+        */
     }
 
-    public void setSelected (boolean state){
+    public void setSelected (boolean state) {
         isSelected = state;
-        if (state){
-            setStyle("-fx-background-color: #C0C0C0; -fx-border-style: solid; -fx-border-width: 1px; -fx-border-color: red;");
-        }else{
-            setStyle("-fx-background-color: #C0C0C0; -fx-border-style: solid; -fx-border-width: 1px; -fx-border-color: black;");
+        if (state) {
+            requestFocus();
+            topLeft.setVisible(true);
+            topRight.setVisible(true);
+            bottomLeft.setVisible(true);
+            bottomRight.setVisible(true);
+            left.setVisible(true);
+            right.setVisible(true);
+            top.setVisible(true);
+            bottom.setVisible(true);
+            //set circle resize nodes visible
+        } else {
+            topLeft.setVisible(false);
+            topRight.setVisible(false);
+            bottomLeft.setVisible(false);
+            bottomRight.setVisible(false);
+            left.setVisible(false);
+            right.setVisible(false);
+            top.setVisible(false);
+            bottom.setVisible(false);
+            //set circle resize nodes invisible
         }
     }
-
-    boolean inBottomMargin(MouseEvent mouseEvent){
-        return mouseEvent.getY() + RESIZE_MARGIN >= getHeight();
-    }
-
-    boolean inTopMargin(MouseEvent mouseEvent){
-        return mouseEvent.getY() <= RESIZE_MARGIN;
-    }
-
-    boolean inRightMargin(MouseEvent mouseEvent){
-        return mouseEvent.getX() + RESIZE_MARGIN >= getWidth();
-    }
-
-    boolean inLeftMargin(MouseEvent mouseEvent){
-        return mouseEvent.getX() <= RESIZE_MARGIN;
-    }
-
-    private void setInResizingArea(MouseEvent mouseEvent){
-        if (inTopMargin(mouseEvent)){
-            if (inLeftMargin(mouseEvent)){
-                setCursor(Cursor.NW_RESIZE);
-            }else if (inRightMargin(mouseEvent)){
-                setCursor(Cursor.NE_RESIZE);
-            }
-            else{
-                setCursor(Cursor.N_RESIZE);
-            }
-        }else if (inBottomMargin(mouseEvent)) {
-            if (inLeftMargin(mouseEvent)){
-                setCursor(Cursor.SW_RESIZE);
-            }else if (inRightMargin(mouseEvent)){
-                setCursor(Cursor.SE_RESIZE);
-            }else{
-                setCursor(Cursor.S_RESIZE);
-            }
-        }else if (inLeftMargin(mouseEvent)){
-            setCursor(Cursor.W_RESIZE);
-        }else if (inRightMargin(mouseEvent)){
-            setCursor(Cursor.E_RESIZE);
-        }else {
-            setCursor(Cursor.DEFAULT);
-        }
-    }
-
-    private void setResizing(MouseEvent mouseEvent){
-        resizing_top = inTopMargin(mouseEvent);
-        resizing_right = inRightMargin(mouseEvent);
-        resizing_bottom = inBottomMargin(mouseEvent);
-        resizing_left = inLeftMargin(mouseEvent);
-    }
-
 }

@@ -1,11 +1,23 @@
-/*menu hierarchy:
-menu-bar
-menu-button
-menu-item
-*/
+.text-field {
+}
+
+#resize-circle {
+  -fx-fill:white;
+  -fx-stroke:gray;
+  -fx-stroke-width:2px;
+}
+
+#uml-class-box-frame{
+}
+
+#uml-class-box-contents{
+  -fx-background-color: #C0C0C0;
+  -fx-border-style: solid;
+  -fx-border-width: 1px;
+  -fx-border-color: black;
+}
 
 .menu-bar {
-
 }
 
 .menu-button {

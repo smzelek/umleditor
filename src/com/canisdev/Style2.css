@@ -1,12 +1,26 @@
-/*menu hierarchy:
-menu-bar
-menu-button
-context-menu
-menu-item
-*/
+.text-field {
+}
+
+#resize-circle {
+  -fx-fill:white;
+  -fx-stroke:gray;
+  -fx-stroke-width:2px;
+}
+
+#uml-class-box-frame{
+  -fx-border-style: dashed;
+  -fx-border-width: 1px;
+  -fx-border-color: red;
+}
+
+#uml-class-box-contents{
+  -fx-background-color: #C0C0C0;
+  -fx-border-style: solid;
+  -fx-border-width: 1px;
+  -fx-border-color: black;
+}
 
 .menu-bar {
-    -fx-background-color:black;
 }
 
 .menu-button {
@@ -16,18 +30,7 @@ menu-item
 }
 
 .menu-button .label {
-    -fx-text-fill:white;
-}
-
-.context-menu {
-    -fx-background-color: gray;
-}
-
-
-.menu-item {
-    -fx-background-color: gray;
 }
 
 .menu-item .label {
-    -fx-text-fill:white;
 }

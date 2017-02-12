@@ -4,6 +4,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+
 import java.util.ArrayList;
 
 /**
@@ -29,15 +31,18 @@ public class UMLArea extends Pane {
                     if (((UMLClassBox) n).isSelected) {
                         getChildren().remove(n);
                         requestFocus();
+                        getScene().setCursor(Cursor.DEFAULT);
                     }
+                    keyEvent.consume();
                 }
 
                 //TODO: bug? can delete while resizing
             }
         });
 
-        setOnMouseClicked((mouseEvent) -> {
-            requestFocus();
+        setOnMouseMoved((mouseEvent) -> {
+            getScene().setCursor(Cursor.DEFAULT);
+            mouseEvent.consume();
         });
 
         setOnMousePressed((mouseEvent) -> {
@@ -45,13 +50,15 @@ public class UMLArea extends Pane {
             lastMousePosY = mouseEvent.getSceneY();
 
             clearSelections();
-            setCursor(Cursor.MOVE);
+            getScene().setCursor(Cursor.MOVE);
 
             requestFocus();
+            mouseEvent.consume();
         });
 
         setOnMouseReleased((mouseEvent) -> {
-            setCursor(Cursor.DEFAULT);
+            getScene().setCursor(Cursor.DEFAULT);
+            mouseEvent.consume();
         });
 
         setOnMouseDragged((mouseEvent) -> {
@@ -66,16 +73,15 @@ public class UMLArea extends Pane {
 
             lastMousePosX = mouseEvent.getSceneX();
             lastMousePosY = mouseEvent.getSceneY();
+            mouseEvent.consume();
         });
     }
 
     public void newBox(){
         UMLClassBox myBox = new UMLClassBox(150, 200);
         getChildren().addAll(myBox);
-
         clearSelections();
         myBox.setSelected(true);
-
         requestFocus();
     }
 

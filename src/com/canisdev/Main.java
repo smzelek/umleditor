@@ -26,6 +26,8 @@ public class Main extends Application {
     //and nodes on an overlay that correspond to the arrows, etc
     //this will all be in the UMLArea
 
+    private String style1url = Main.class.getResource("Style1.css").toExternalForm();
+
     @Override
     public void start(Stage primaryStage){
         primaryStage.setTitle("CANIS UML Editor 1.0");
@@ -56,10 +58,14 @@ public class Main extends Application {
         root.setBottom(palette);
         scene = new Scene(root, 400,450);
 
+        //scene.getStylesheets().add(style1url);
+
         primaryStage.setResizable(true);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Canis UML Editor 0.1b");
         primaryStage.show();
+
+        topMenu.useStyle(0);
     }
 
     public static void main(String[] args) {

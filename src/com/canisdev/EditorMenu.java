@@ -7,6 +7,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.WindowEvent;
 
+import java.util.ArrayList;
+
 /**
  * Created by steve on 2/8/2017.
  */
@@ -15,9 +17,15 @@ public class EditorMenu extends MenuBar {
 
     private String style1url = Main.class.getResource("Style1.css").toExternalForm();
     private String style2url = Main.class.getResource("Style2.css").toExternalForm();
+    private ArrayList<String> styleOptions;
 
     public EditorMenu (){
+
         super();
+        styleOptions = new ArrayList<>();
+        styleOptions.add(style1url);
+        styleOptions.add(style2url);
+
         Image newFileIcon = new Image(getClass().getResourceAsStream("newfileicon.png"));
         ImageView newFileView = new ImageView(newFileIcon);
 
@@ -68,28 +76,29 @@ public class EditorMenu extends MenuBar {
 
         /*VIEW MENU*/
 
-        //todo: bug? changing style affects part of UMLclassbox layout
-
         Menu menuView = new Menu("View");
         Menu styleOptions = new Menu("Themes");
-        MenuItem style1 = new MenuItem("Default");
+        MenuItem style0 = new MenuItem("Default");
+        style0.setOnAction((e) -> {
+            useStyle(0);
+        });
+
+        MenuItem style1 = new MenuItem("Test Style");
         style1.setOnAction((e) -> {
-            getScene().getStylesheets().removeAll(style1url, style2url);
-            getScene().getStylesheets().add(style1url);
+            useStyle(1);
         });
 
-        MenuItem style2 = new MenuItem("Test Style");
-        style2.setOnAction((e) -> {
-            getScene().getStylesheets().removeAll(style1url, style2url);
-            getScene().getStylesheets().add(style2url);
-        });
-
-        styleOptions.getItems().addAll(style1, style2);
+        styleOptions.getItems().addAll(style0, style1);
         menuView.getItems().addAll(styleOptions);
         /*END OF VIEW MENU*/
 
         getMenus().addAll(fileButton, menuEdit, menuView);
         setPrefWidth(Double.MAX_VALUE);
+    }
+
+    public void useStyle (int styleNumber){
+        getScene().getStylesheets().clear();
+        getScene().getStylesheets().add(styleOptions.get(styleNumber));
     }
 
 }
