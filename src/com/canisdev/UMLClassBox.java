@@ -1,19 +1,12 @@
 package com.canisdev;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Circle;
 
 /**
  * Created by steve on 2/7/2017.
@@ -61,22 +54,26 @@ public class UMLClassBox extends StackPane {
         contents.setVgrow(methodArea, Priority.ALWAYS);
         contents.setVgrow(attributeArea, Priority.ALWAYS);
         contents.getChildren().addAll(nameArea,attributeArea,methodArea);
+        contents.setPrefWidth(Double.MAX_VALUE);
+        contents.setPrefHeight(Double.MAX_VALUE);
 
-        topLeft = new ResizeNode();
+        ResizeNode.setNodeRadius(RESIZE_MARGIN);
+
+        topLeft = new ResizeNode(ResizeNode.TOP_LEFT);
         setAlignment(topLeft, Pos.TOP_LEFT);
-        top = new ResizeNode();
+        top = new ResizeNode(ResizeNode.TOP_CENTER);
         setAlignment(top, Pos.TOP_CENTER);
-        topRight = new ResizeNode();
+        topRight = new ResizeNode(ResizeNode.TOP_RIGHT);
         setAlignment(topRight, Pos.TOP_RIGHT);
-        right = new ResizeNode();
+        right = new ResizeNode(ResizeNode.CENTER_RIGHT);
         setAlignment(right, Pos.CENTER_RIGHT);
-        bottomRight = new ResizeNode();
+        bottomRight = new ResizeNode(ResizeNode.BOTTOM_RIGHT);
         setAlignment(bottomRight, Pos.BOTTOM_RIGHT);
-        bottom = new ResizeNode();
+        bottom = new ResizeNode(ResizeNode.BOTTOM_CENTER);
         setAlignment(bottom, Pos.BOTTOM_CENTER);
-        bottomLeft = new ResizeNode();
+        bottomLeft = new ResizeNode(ResizeNode.BOTTOM_LEFT);
         setAlignment(bottomLeft, Pos.BOTTOM_LEFT);
-        left = new ResizeNode();
+        left = new ResizeNode(ResizeNode.CENTER_LEFT);
         setAlignment(left, Pos.CENTER_LEFT);
 
         getChildren().addAll(contents);
@@ -141,6 +138,16 @@ public class UMLClassBox extends StackPane {
             toFront();
             ((UMLArea) getParent()).clearSelections();
             methodArea.home();
+            mouseEvent.consume();
+        });
+
+        contents.setOnMouseExited((mouseEvent) -> {
+            getScene().setCursor(Cursor.DEFAULT);
+            mouseEvent.consume();
+        });
+
+        setOnMouseExited((mouseEvent) -> {
+            getScene().setCursor(Cursor.DEFAULT);
             mouseEvent.consume();
         });
 
@@ -276,17 +283,7 @@ public class UMLClassBox extends StackPane {
                 }
             }
 
-            //if not doing a resize, do a translate
-            if (!(resizing_bottom || resizing_left || resizing_right || resizing_top))
-            {
-                setCursor(Cursor.MOVE);
-                setTranslateX(getTranslateX() + offsetX);
-                setTranslateY(getTranslateY() + offsetY);
-            }
 
-            lastMousePosX = mouseEvent.getSceneX();
-            lastMousePosY = mouseEvent.getSceneY();
-            mouseEvent.consume();
         });
 
         setOnMouseReleased((mouseEvent) -> {
