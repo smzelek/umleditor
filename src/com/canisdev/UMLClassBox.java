@@ -1,5 +1,6 @@
 package com.canisdev;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -7,6 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Line;
 
 /**
  * Created by steve on 2/7/2017.
@@ -38,14 +40,20 @@ public class UMLClassBox extends StackPane {
         nameArea.setPromptText("Name");
         nameArea.setAlignment(Pos.TOP_CENTER);
         nameArea.setPrefHeight(25);
+        nameArea.setPrefWidth(Double.MAX_VALUE);
+        nameArea.setMaxWidth(Double.MAX_VALUE);
 
         attributeArea = new TextArea();
         attributeArea.setPromptText("Attributes");
         attributeArea.setPrefHeight(80);
+        attributeArea.setPrefWidth(Double.MAX_VALUE);
+        attributeArea.setMaxWidth(Double.MAX_VALUE);
 
         methodArea = new TextArea();
         methodArea.setPromptText("Methods");
         methodArea.setPrefHeight(80);
+        methodArea.setPrefWidth(Double.MAX_VALUE);
+        methodArea.setMaxWidth(Double.MAX_VALUE);
 
         contents = new VBox();
         contents.setId("uml-class-box-contents");
@@ -55,7 +63,9 @@ public class UMLClassBox extends StackPane {
         contents.setVgrow(attributeArea, Priority.ALWAYS);
         contents.getChildren().addAll(nameArea,attributeArea,methodArea);
         contents.setPrefWidth(Double.MAX_VALUE);
+        contents.setMaxWidth(Double.MAX_VALUE);
         contents.setPrefHeight(Double.MAX_VALUE);
+        contents.setMaxHeight(Double.MAX_VALUE);
 
         ResizeNode.setNodeRadius(RESIZE_MARGIN);
 
@@ -81,6 +91,7 @@ public class UMLClassBox extends StackPane {
         setAlignment(contents, Pos.CENTER);
         setMargin(contents, new Insets(RESIZE_MARGIN));
         setId("uml-class-box-frame");
+        setPrefSize(Double.MAX_VALUE, Double.MAX_VALUE);
         setMaxSize(width, height);
         setMinSize(width, height);
 
@@ -217,82 +228,11 @@ public class UMLClassBox extends StackPane {
             lastMousePosY = mouseEvent.getSceneY();
             mouseEvent.consume();
         });
+    }
 
-        /*
-        setOnMouseDragged((mouseEvent) -> {
-            double offsetX = mouseEvent.getSceneX() - lastMousePosX;
-            double offsetY = mouseEvent.getSceneY() - lastMousePosY;
-
-            if (resizing_right){
-                double rightmargin = getTranslateX() + getWidth() - RESIZE_MARGIN/2;
-                double windowOffsetX = mouseEvent.getSceneX() - rightmargin;
-
-                if (windowOffsetX > 0){ //mouse is to right of right margin
-                    setMaxWidth(getMaxWidth() + windowOffsetX);
-                }
-                else if (getWidth() > getMinWidth()) { //on right margin or to left of it
-                    setMaxWidth(getMaxWidth() + windowOffsetX);
-                }
-            }else if (resizing_left){
-                //TODO: some bugginess here, window sometimes jumps while resizing
-                double leftmargin = getTranslateX() + RESIZE_MARGIN/2;
-                double windowOffsetX = mouseEvent.getSceneX() - leftmargin;
-
-                if (windowOffsetX < 0){ //mouse is to left of left margin
-                    //grow window
-                    setMaxWidth(getMaxWidth() - windowOffsetX);
-                    //appear to remain fixed
-                    setTranslateX(getTranslateX() + windowOffsetX);
-
-                }
-                else if (getWidth() > getMinWidth()) { //on left margin or to right of it
-                    if (getWidth() - windowOffsetX >= getMinWidth()){
-                        setMaxWidth(getMaxWidth() - windowOffsetX);
-                        //appear to remain fixed
-                        setTranslateX(getTranslateX() + windowOffsetX);
-                    }
-                }
-            }
-            if (resizing_bottom){
-                double bottommargin = getTranslateY() + getHeight() - RESIZE_MARGIN/2;
-                double windowOffsetY = mouseEvent.getSceneY() - bottommargin;
-                if (windowOffsetY > 0){ //mouse is below bottom margin
-                    setMaxHeight(getMaxHeight() + windowOffsetY);
-                }
-                else if (getHeight() > getMinHeight()) { //above bottom margin
-                    setMaxHeight(getMaxHeight() + windowOffsetY);
-                }
-            } else if (resizing_top) {
-                //TODO: some bugginess here, window sometimes jumps while resizing
-                double topmargin = getTranslateY() + RESIZE_MARGIN/2;
-                double windowOffsetY = mouseEvent.getSceneY() - topmargin;
-
-                if (windowOffsetY < 0){ //mouse is above topmargin
-                    //grow window
-                    setMaxHeight(getMaxHeight() - windowOffsetY);
-                    //appear to remain fixed
-                    setTranslateY(getTranslateY() + windowOffsetY);
-
-                }
-                else if (getHeight() > getMinHeight()) { //mouse below top margin
-                    if (getHeight() - windowOffsetY >= getMinHeight()){
-                        setMaxHeight(getMaxHeight() - windowOffsetY);
-                        //appear to remain fixed
-                        setTranslateY(getTranslateY() + windowOffsetY);
-                    }
-                }
-            }
-
-
-        });
-
-        setOnMouseReleased((mouseEvent) -> {
-            setCursor(Cursor.DEFAULT);
-            mouseEvent.consume();
-        });
-
-
-        */
+    public void setDependentLine(Line line, DoubleProperty lineX, DoubleProperty lineY){
+        lineX.bind(translateXProperty());
+        lineY.bind(translateYProperty());
     }
 
     public void setSelected (boolean state) {

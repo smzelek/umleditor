@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
@@ -35,22 +36,18 @@ public class Main extends Application {
         EditorMenu topMenu = new EditorMenu();
         UMLArea umlArea = new UMLArea();
 
-        GridPane palette = new GridPane();
+        HBox palette = new HBox();
         palette.setPrefWidth(Double.MAX_VALUE);
-        palette.setGridLinesVisible(true);
-        ColumnConstraints cc = new ColumnConstraints();
-        cc.setPercentWidth(100);
-        palette.getColumnConstraints().add(cc);
 
         Button btn = new Button("Add Class Box");
         btn.setPrefWidth(Double.MAX_VALUE);
         btn.setMaxWidth(100);
 
-        btn.setOnAction((actionEvent) -> {
-            umlArea.newBox();
-        });
+        Button idbtn = new Button("Identify Box");
+        idbtn.setPrefWidth(Double.MAX_VALUE);
+        idbtn.setMaxWidth(100);
 
-        palette.add(btn, 0, 0);
+        palette.getChildren().addAll(btn, idbtn);
 
         BorderPane root = new BorderPane();
         root.setCenter(umlArea);
@@ -58,7 +55,17 @@ public class Main extends Application {
         root.setBottom(palette);
         scene = new Scene(root, 400,450);
 
-        //scene.getStylesheets().add(style1url);
+        btn.setOnAction((actionEvent) -> {
+            umlArea.setNewBoxMode(true);
+            umlArea.clearSelections();
+            scene.setCursor(Cursor.CROSSHAIR);
+        });
+
+        idbtn.setOnAction((actionEvent) -> {
+            umlArea.setNewLineMode(true);
+            umlArea.clearSelections();
+            scene.setCursor(Cursor.CROSSHAIR);
+        });
 
         primaryStage.setResizable(true);
         primaryStage.setScene(scene);
