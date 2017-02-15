@@ -30,7 +30,6 @@ public class ResizeNode extends Circle {
     private double parentRightMarginPos;
     private double parentBottomMarginPos;
 
-
     public ResizeNode (int resizeType){
         super(RADIUS);
 
@@ -77,15 +76,15 @@ public class ResizeNode extends Circle {
 
             UMLClassBox parent = (UMLClassBox) getParent();
 
-            if (parent.getMaxWidth() < parent.getMinWidth()){
-                parent.setMaxWidth(parent.getMinWidth());
+            if (parent.getPrefWidth() < parent.getMinWidth()){
+                parent.setPrefWidth(parent.getMinWidth());
             }
-            if (parent.getMaxHeight() < parent.getMinHeight()){
-                parent.setMaxHeight(parent.getMinHeight());
+            if (parent.getPrefHeight() < parent.getMinHeight()){
+                parent.setPrefHeight(parent.getMinHeight());
             }
 
-            parentRightMarginPos = parent.getTranslateX() + parent.getMaxWidth();
-            parentBottomMarginPos = parent.getTranslateY() + parent.getMaxHeight();
+            parentRightMarginPos = parent.getTranslateX() + parent.getPrefWidth();
+            parentBottomMarginPos = parent.getTranslateY() + parent.getPrefHeight();
 
             mouseEvent.consume();
         });
@@ -129,7 +128,6 @@ public class ResizeNode extends Circle {
             lastMousePosY = mouseEvent.getSceneY();
             mouseEvent.consume();
         });
-
     }
 
     public static void setNodeRadius (double newRadius){
@@ -138,9 +136,9 @@ public class ResizeNode extends Circle {
 
     private void resizeTop(){
         UMLClassBox parent = (UMLClassBox) getParent();
-        parent.setMaxHeight(parent.getMaxHeight() - offsetY);
-        if (parent.getMaxHeight() >= parent.getMinHeight()){
-            parent.setTranslateY(parentBottomMarginPos - parent.getMaxHeight());
+        parent.setPrefHeight(parent.getPrefHeight() - offsetY);
+        if (parent.getPrefHeight() > parent.getMinHeight()){
+            parent.setTranslateY(parentBottomMarginPos - parent.getPrefHeight());
         }
         else{
             parent.setTranslateY(parentBottomMarginPos - parent.getMinHeight());
@@ -149,22 +147,25 @@ public class ResizeNode extends Circle {
 
     private void resizeRight(){
         UMLClassBox parent = (UMLClassBox) getParent();
-        parent.setMaxWidth(parent.getMaxWidth() + offsetX);
+        parent.setPrefWidth(parent.getPrefWidth() + offsetX);
     }
 
     private void resizeBottom(){
         UMLClassBox parent = (UMLClassBox) getParent();
-        parent.setMaxHeight(parent.getMaxHeight() + offsetY);
+        parent.setPrefHeight(parent.getPrefHeight() + offsetY);
     }
 
     private void resizeLeft(){
         UMLClassBox parent = (UMLClassBox) getParent();
-        parent.setMaxWidth(parent.getMaxWidth() - offsetX);
-        if (parent.getMaxWidth() >= parent.getMinWidth()){
-            parent.setTranslateX(parentRightMarginPos - parent.getMaxWidth());
+        parent.setPrefWidth(parent.getPrefWidth() - offsetX);
+
+        if (parent.getPrefWidth() > parent.getMinWidth()){
+            parent.setTranslateX(parentRightMarginPos - parent.getPrefWidth());
         }
         else{
             parent.setTranslateX(parentRightMarginPos - parent.getMinWidth());
+            System.out.println(parentRightMarginPos);
+            System.out.println(parent.getPrefWidth());
         }
     }
 

@@ -1,13 +1,10 @@
 package com.canisdev;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 
@@ -16,7 +13,11 @@ import java.util.ArrayList;
  */
 public class UMLArea extends Pane {
 
+    //TODO: when making lines, send its parent/child to front of UMLArea
     //TODO: hitting escape will exit out of new box and new line mode
+    //TODO: where should the relationships EXIST? in the UMLArea or only as children of nodes
+    //will both parent and child have a copy? fine, but design issues if delete
+    //if not, design issues for when a box moves translating the line
 
     private double lastMousePosX;
     private double lastMousePosY;
@@ -24,7 +25,7 @@ public class UMLArea extends Pane {
     private boolean newLineMode = false;
 
     private ArrayList<UMLClassBox> boxes;
-    private ArrayList<Line> lines;
+    private ArrayList<Relationship> relationships;
 
     private UMLClassBox lineParent1;
     private UMLClassBox lineParent2;
@@ -33,18 +34,19 @@ public class UMLArea extends Pane {
         super();
 
         boxes = new ArrayList<>();
-        lines = new ArrayList<>();
+        relationships = new ArrayList<>();
 
         setOnKeyReleased((keyEvent) -> {
             //delete any nodes that are selected
             if (keyEvent.getCode() == KeyCode.DELETE || keyEvent.getCode() == KeyCode.BACK_SPACE){
+                ArrayList<UMLClassBox> boxCopy = new ArrayList<>(boxes);
 
-                ArrayList<UMLClassBox> box_children = new ArrayList<>(boxes);
-
-                for (UMLClassBox n : box_children){
+                for (UMLClassBox n : boxCopy){
                     if (n.isSelected) {
-                        getChildren().remove(n);
+                        removeLineIfDependent(n);
                         boxes.remove(n);
+                        getChildren().remove(n);
+
                         requestFocus();
                         getScene().setCursor(Cursor.DEFAULT);
                     }
@@ -77,11 +79,10 @@ public class UMLArea extends Pane {
 
         setOnMouseReleased((mouseEvent) -> {
             if (newBoxMode){
-                System.out.println("dsdsds");
+                //System.out.println("dsdsds");
                 newBox(mouseEvent.getX(), mouseEvent.getY());
                 setNewBoxMode(false);
             }
-            //TODO: future bugs possible if lines are in get children!
             else if (newLineMode){
                 for (UMLClassBox n : boxes){
                     Point2D localMouseXY = n.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
@@ -113,7 +114,8 @@ public class UMLArea extends Pane {
             double offsetY = mouseEvent.getSceneY() - lastMousePosY;
 
             //translate all boxes, lines will move w/ children
-            for (Node n : boxes){
+            for (Node n : getChildren()){
+                //todo: let nodes do move in class method, so lines are moved too
                 n.setTranslateX(n.getTranslateX() + offsetX);
                 n.setTranslateY(n.getTranslateY() + offsetY);
             }
@@ -122,6 +124,19 @@ public class UMLArea extends Pane {
             lastMousePosY = mouseEvent.getSceneY();
             mouseEvent.consume();
         });
+    }
+
+    private void removeLineIfDependent(UMLClassBox box){
+
+        ArrayList<Relationship> relationshipsCopy = new ArrayList<>(relationships);
+
+        for (Relationship r : relationshipsCopy){
+            if (r.dependsOn(box)){
+                relationships.remove(r);
+                getChildren().remove(r);
+            }
+        }
+
     }
 
     public void setNewBoxMode(boolean state){
@@ -147,26 +162,15 @@ public class UMLArea extends Pane {
     }
 
     private void newLine(){
-        Line line = new Line();
-        DoubleProperty startX = new SimpleDoubleProperty();
-        DoubleProperty startY = new SimpleDoubleProperty();
-        line.startXProperty().bind(startX);
-        line.startYProperty().bind(startY);
-        lineParent1.setDependentLine(line, startX, startY);
-
-        DoubleProperty endX = new SimpleDoubleProperty();
-        DoubleProperty endY = new SimpleDoubleProperty();
-        line.endXProperty().bind(endX);
-        line.endYProperty().bind(endY);
-        lineParent2.setDependentLine(line, endX, endY);
+        Relationship rel = new Relationship(lineParent1, lineParent2);
 
         //todo: lineParent1/2 add dependent (line)
         //todo: on delete, also delete dependents
         //todo: on move/resize a box, find closest "anchor point" for a line on its parent
         //todo: lines are not always on top
 
-        getChildren().addAll(line);
-        lines.add(line);
+        getChildren().addAll(rel);
+        relationships.add(rel);
     }
 
     private void newBox(double xpos, double ypos){
