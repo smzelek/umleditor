@@ -1,10 +1,10 @@
 package com.canisdev;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
@@ -13,60 +13,109 @@ import java.util.ArrayList;
  */
 public class UMLArea extends Pane {
 
-    //TODO: create new boxes with an offset
+    //TODO: when making lines, send its parent/child to front of UMLArea
+    //TODO: hitting escape will exit out of new box and new line mode
+    //TODO: where should the relationships EXIST? in the UMLArea or only as children of nodes
+    //will both parent and child have a copy? fine, but design issues if delete
+    //if not, design issues for when a box moves translating the line
 
     private double lastMousePosX;
     private double lastMousePosY;
+    private boolean newBoxMode = false;
+    private boolean newLineMode = false;
+
+    private ArrayList<UMLClassBox> boxes;
+    private ArrayList<Relationship> relationships;
+
+    private UMLClassBox lineParent1;
+    private UMLClassBox lineParent2;
 
     public UMLArea () {
         super();
 
+        boxes = new ArrayList<>();
+        relationships = new ArrayList<>();
+
         setOnKeyReleased((keyEvent) -> {
             //delete any nodes that are selected
             if (keyEvent.getCode() == KeyCode.DELETE || keyEvent.getCode() == KeyCode.BACK_SPACE){
+                ArrayList<UMLClassBox> boxCopy = new ArrayList<>(boxes);
 
-                ArrayList<Node> children = new ArrayList<>(getChildren());
-
-                for (Node n : children){
-                    if (((UMLClassBox) n).isSelected) {
+                for (UMLClassBox n : boxCopy){
+                    if (n.isSelected) {
+                        removeLineIfDependent(n);
+                        boxes.remove(n);
                         getChildren().remove(n);
+
                         requestFocus();
                         getScene().setCursor(Cursor.DEFAULT);
                     }
                     keyEvent.consume();
                 }
-
-                //TODO: bug? can delete while resizing
             }
         });
 
         setOnMouseMoved((mouseEvent) -> {
-            getScene().setCursor(Cursor.DEFAULT);
+            if (newBoxMode || newLineMode){
+                getScene().setCursor(Cursor.CROSSHAIR);
+            }else{
+                getScene().setCursor(Cursor.DEFAULT);
+            }
             mouseEvent.consume();
         });
 
         setOnMousePressed((mouseEvent) -> {
-            lastMousePosX = mouseEvent.getSceneX();
-            lastMousePosY = mouseEvent.getSceneY();
+            if (!newBoxMode && !newLineMode){
+                lastMousePosX = mouseEvent.getSceneX();
+                lastMousePosY = mouseEvent.getSceneY();
 
-            clearSelections();
-            getScene().setCursor(Cursor.MOVE);
+                clearSelections();
+                getScene().setCursor(Cursor.MOVE);
+            }
 
             requestFocus();
             mouseEvent.consume();
         });
 
         setOnMouseReleased((mouseEvent) -> {
+            if (newBoxMode){
+                //System.out.println("dsdsds");
+                newBox(mouseEvent.getX(), mouseEvent.getY());
+                setNewBoxMode(false);
+            }
+            else if (newLineMode){
+                for (UMLClassBox n : boxes){
+                    Point2D localMouseXY = n.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+                    if (n.contains(localMouseXY)){
+                        if (lineParent1 == null){
+                            lineParent1 = n;
+                            System.out.println(n);
+                            break;
+                        }else if (!n.equals(lineParent1)){
+                            lineParent2 = n;
+                            System.out.println(n);
+                            newLine();
+
+                            setNewLineMode(false);
+                            break;
+                        }
+                    }
+                }
+            }
             getScene().setCursor(Cursor.DEFAULT);
             mouseEvent.consume();
         });
 
         setOnMouseDragged((mouseEvent) -> {
+            if (newBoxMode || newLineMode){
+                return;
+            }
             double offsetX = mouseEvent.getSceneX() - lastMousePosX;
             double offsetY = mouseEvent.getSceneY() - lastMousePosY;
 
-            //translate all children
+            //translate all boxes, lines will move w/ children
             for (Node n : getChildren()){
+                //todo: let nodes do move in class method, so lines are moved too
                 n.setTranslateX(n.getTranslateX() + offsetX);
                 n.setTranslateY(n.getTranslateY() + offsetY);
             }
@@ -77,17 +126,68 @@ public class UMLArea extends Pane {
         });
     }
 
-    public void newBox(){
+    private void removeLineIfDependent(UMLClassBox box){
+
+        ArrayList<Relationship> relationshipsCopy = new ArrayList<>(relationships);
+
+        for (Relationship r : relationshipsCopy){
+            if (r.dependsOn(box)){
+                relationships.remove(r);
+                getChildren().remove(r);
+            }
+        }
+
+    }
+
+    public void setNewBoxMode(boolean state){
+        if (state){
+            newLineMode = false;
+        }
+        for (Node n :getChildren()){
+            n.setMouseTransparent(state);
+        }
+        newBoxMode = state;
+    }
+
+    public void setNewLineMode(boolean state){
+        if (state){
+            newBoxMode = false;
+            lineParent1 = null;
+            lineParent2 = null;
+        }
+        for (Node n :getChildren()){
+            n.setMouseTransparent(state);
+        }
+        newLineMode = state;
+    }
+
+    private void newLine(){
+        Relationship rel = new Relationship(lineParent1, lineParent2);
+
+        //todo: lineParent1/2 add dependent (line)
+        //todo: on delete, also delete dependents
+        //todo: on move/resize a box, find closest "anchor point" for a line on its parent
+        //todo: lines are not always on top
+
+        getChildren().addAll(rel);
+        relationships.add(rel);
+    }
+
+    private void newBox(double xpos, double ypos){
         UMLClassBox myBox = new UMLClassBox(150, 200);
         getChildren().addAll(myBox);
+        boxes.add(myBox);
+        myBox.setTranslateX(xpos-75);
+        myBox.setTranslateY(ypos-100);
+
         clearSelections();
         myBox.setSelected(true);
         requestFocus();
     }
 
     public void clearSelections(){
-        for (Node n : getChildren()){
-            ((UMLClassBox) n).setSelected(false);
+        for (UMLClassBox n : boxes){
+            n.setSelected(false);
         }
     }
 
