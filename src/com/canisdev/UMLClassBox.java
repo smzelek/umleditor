@@ -2,6 +2,7 @@ package com.canisdev;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.TextArea;
@@ -256,6 +257,18 @@ public class UMLClassBox extends StackPane {
 
     public ArrayList<ResizeNode> getNodes (){
         return new ArrayList<>(Arrays.asList(topLeft, top, topRight, right, bottomRight, bottom, bottomLeft, left));
+    }
+
+    public Point2D getLeftAnchorPoint () {
+        double xpos = getTranslateX() + RESIZE_MARGIN;
+        double ypos = getTranslateY() + getHeight()/2 + RESIZE_MARGIN;
+        return new Point2D(xpos, ypos);
+    }
+
+    public Point2D getRightAnchorPoint () {
+        double xpos = getTranslateX() + getWidth() - RESIZE_MARGIN;
+        double ypos = getTranslateY() + getHeight()/2 + RESIZE_MARGIN;
+        return new Point2D(xpos, ypos);
     }
 
     public void addDependentRelationship(Relationship r){

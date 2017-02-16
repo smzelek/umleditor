@@ -40,12 +40,12 @@ public class Main extends Application {
         palette.setPrefWidth(Double.MAX_VALUE);
 
         Button btn = new Button("Add Class Box");
-        btn.setPrefWidth(Double.MAX_VALUE);
-        btn.setMaxWidth(100);
+        //btn.setPrefWidth(Double.MAX_VALUE);
+        btn.setMaxWidth(Double.MAX_VALUE);
 
-        Button idbtn = new Button("Identify Box");
-        idbtn.setPrefWidth(Double.MAX_VALUE);
-        idbtn.setMaxWidth(100);
+        Button idbtn = new Button("Add Relationship");
+        //idbtn.setPrefWidth(Double.MAX_VALUE);
+        idbtn.setMaxWidth(Double.MAX_VALUE);
 
         palette.getChildren().addAll(btn, idbtn);
 

@@ -79,7 +79,6 @@ public class UMLArea extends Pane {
 
         setOnMouseReleased((mouseEvent) -> {
             if (newBoxMode){
-                //System.out.println("dsdsds");
                 newBox(mouseEvent.getX(), mouseEvent.getY());
                 setNewBoxMode(false);
             }
@@ -89,11 +88,9 @@ public class UMLArea extends Pane {
                     if (n.contains(localMouseXY)){
                         if (lineParent1 == null){
                             lineParent1 = n;
-                            System.out.println(n);
                             break;
                         }else if (!n.equals(lineParent1)){
                             lineParent2 = n;
-                            System.out.println(n);
                             newLine();
 
                             setNewLineMode(false);
@@ -174,11 +171,13 @@ public class UMLArea extends Pane {
     }
 
     private void newBox(double xpos, double ypos){
-        UMLClassBox myBox = new UMLClassBox(150, 200);
+        int boxWidth = 120;
+        int boxHeight = 160;
+        UMLClassBox myBox = new UMLClassBox(boxWidth, boxHeight);
         getChildren().addAll(myBox);
         boxes.add(myBox);
-        myBox.setTranslateX(xpos-75);
-        myBox.setTranslateY(ypos-100);
+        myBox.setTranslateX(xpos - boxWidth/2);
+        myBox.setTranslateY(ypos - boxHeight/2);
 
         clearSelections();
         myBox.setSelected(true);

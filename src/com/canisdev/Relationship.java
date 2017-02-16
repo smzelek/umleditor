@@ -1,16 +1,24 @@
 package com.canisdev;
 
 import javafx.event.EventHandler;
-import javafx.scene.shape.Line;
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
+import javafx.scene.transform.Rotate;
 
 /**
  * Created by steve on 2/13/2017.
  */
 
-public class Relationship extends Line {
+public class Relationship extends Group {
 
     private UMLClassBox parent;
     private UMLClassBox child;
+    private Line path;
+    private Polygon arrowHead;
+    private Rotate rzArrowHead;
+    private double arrowRotationOffset = 90;
 
     public Relationship(UMLClassBox parent, UMLClassBox child){
         super();
@@ -18,25 +26,58 @@ public class Relationship extends Line {
         this.parent = parent;
         this.child = child;
 
+        path = new Line();
+        path.setStartX(parent.getRightAnchorPoint().getX());
+        path.setStartY(parent.getRightAnchorPoint().getY());
+        path.setEndX(child.getLeftAnchorPoint().getX());
+        path.setEndY(child.getLeftAnchorPoint().getY());
+        path.setStrokeWidth(2);
+        path.setStrokeLineCap(StrokeLineCap.SQUARE);
+
+        double[] arrowShape = new double[] { 0,0,10,20,-10,20 };
+        Polygon p = new Polygon(arrowShape);
+
+        p.setFill(Color.WHITE);
+        p.setStroke(Color.BLACK);
+        p.setTranslateX(path.getEndX());
+        p.setTranslateY(path.getEndY());
+
+        rzArrowHead = new Rotate();
+        rzArrowHead.setAxis(Rotate.Z_AXIS);
+        p.getTransforms().add(rzArrowHead);
+
+
+        double opposite = path.getStartY() - path.getEndY();
+        double adjacent = path.getEndX() - path.getStartX();
+        double angle = Math.atan(opposite/adjacent);
+        angle = Math.toDegrees(angle);
+        rzArrowHead.setAngle(arrowRotationOffset - angle);
+
+        getChildren().addAll(path, p);
+
         parent.addDependentRelationship(this);
         child.addDependentRelationship(this);
-
-        setStartX(parent.getTranslateX() + parent.getWidth()/2);
-        setStartY(parent.getTranslateY() + parent.getHeight()/2);
-        setEndX(child.getTranslateX() + child.getWidth()/2);
-        setEndY(child.getTranslateY() + child.getHeight()/2);
 
         addEventHandler(AnchorEvent.MOVED, new EventHandler<AnchorEvent>() {
             @Override
             public void handle(AnchorEvent event) {
                 if (event.getMovedBox().equals(parent)){
-                    setStartX(event.getX());
-                    setStartY(event.getY());
+                    path.setStartX(event.getMovedBox().getRightAnchorPoint().getX());
+                    path.setStartY(event.getMovedBox().getRightAnchorPoint().getY());
 
                     event.consume();
                 }else if (event.getMovedBox().equals(child)){
-                    setEndX(event.getX());
-                    setEndY(event.getY());
+                    path.setEndX(event.getMovedBox().getLeftAnchorPoint().getX());
+                    path.setEndY(event.getMovedBox().getLeftAnchorPoint().getY());
+
+                    p.setTranslateX(path.getEndX());
+                    p.setTranslateY(path.getEndY());
+                    double opposite = path.getStartY() - path.getEndY();
+                    double adjacent = path.getEndX() - path.getStartX();
+                    double angle = Math.atan(opposite/adjacent);
+                    angle = Math.toDegrees(angle);
+                    rzArrowHead.setAngle(arrowRotationOffset - angle);
+                    //p.getTransforms().add(new Rotate(arrowRotationOffset - angle));
 
                     event.consume();
                 }
