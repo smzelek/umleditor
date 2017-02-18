@@ -35,41 +35,18 @@ public class Main extends Application {
 
         EditorMenu topMenu = new EditorMenu();
         UMLArea umlArea = new UMLArea();
-
-        HBox palette = new HBox();
-        palette.setPrefWidth(Double.MAX_VALUE);
-
-        Button btn = new Button("Add Class Box");
-        //btn.setPrefWidth(Double.MAX_VALUE);
-        btn.setMaxWidth(Double.MAX_VALUE);
-
-        Button idbtn = new Button("Add Relationship");
-        //idbtn.setPrefWidth(Double.MAX_VALUE);
-        idbtn.setMaxWidth(Double.MAX_VALUE);
-
-        palette.getChildren().addAll(btn, idbtn);
+        ButtonTray buttonTray = new ButtonTray(umlArea);
 
         BorderPane root = new BorderPane();
         root.setCenter(umlArea);
         root.setTop(topMenu);
-        root.setBottom(palette);
+        root.setBottom(buttonTray);
         scene = new Scene(root, 400,450);
-
-        btn.setOnAction((actionEvent) -> {
-            umlArea.setNewBoxMode(true);
-            umlArea.clearSelections();
-            scene.setCursor(Cursor.CROSSHAIR);
-        });
-
-        idbtn.setOnAction((actionEvent) -> {
-            umlArea.setNewLineMode(true);
-            umlArea.clearSelections();
-            scene.setCursor(Cursor.CROSSHAIR);
-        });
+        primaryStage.setMinWidth(400);
+        primaryStage.setMinHeight(350);
 
         primaryStage.setResizable(true);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Canis UML Editor 0.1b");
         primaryStage.show();
 
         topMenu.useStyle(0);

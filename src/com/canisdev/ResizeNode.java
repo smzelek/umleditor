@@ -1,5 +1,6 @@
 package com.canisdev;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.shape.Circle;
 
@@ -124,6 +125,7 @@ public class ResizeNode extends Circle {
                     break;
             }
 
+            ((UMLClassBox) getParent()).sendMoveEvent();
             lastMousePosX = mouseEvent.getSceneX();
             lastMousePosY = mouseEvent.getSceneY();
             mouseEvent.consume();
@@ -164,8 +166,6 @@ public class ResizeNode extends Circle {
         }
         else{
             parent.setTranslateX(parentRightMarginPos - parent.getMinWidth());
-            System.out.println(parentRightMarginPos);
-            System.out.println(parent.getPrefWidth());
         }
     }
 

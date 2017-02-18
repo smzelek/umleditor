@@ -26,19 +26,19 @@ public class EditorMenu extends MenuBar {
         styleOptions.add(style1url);
         styleOptions.add(style2url);
 
-        Image newFileIcon = new Image(getClass().getResourceAsStream("newfileicon.png"));
+        Image newFileIcon = new Image(getClass().getResourceAsStream("img/newfileicon.png"));
         ImageView newFileView = new ImageView(newFileIcon);
 
-        Image openFileIcon = new Image(getClass().getResourceAsStream("openicon.png"));
+        Image openFileIcon = new Image(getClass().getResourceAsStream("img/openicon.png"));
         ImageView openFileView = new ImageView(openFileIcon);
 
-        Image saveIcon = new Image(getClass().getResourceAsStream("saveicon.png"));
+        Image saveIcon = new Image(getClass().getResourceAsStream("img/saveicon.png"));
         ImageView saveView = new ImageView(saveIcon);
 
-        Image settingsIcon = new Image(getClass().getResourceAsStream("settingsicon.png"));
+        Image settingsIcon = new Image(getClass().getResourceAsStream("img/settingsicon.png"));
         ImageView settingsView = new ImageView(settingsIcon);
 
-        Image exitIcon = new Image(getClass().getResourceAsStream("exiticon.png"));
+        Image exitIcon = new Image(getClass().getResourceAsStream("img/exiticon.png"));
         ImageView exitView = new ImageView(exitIcon);
 
         /* FILE MENU */

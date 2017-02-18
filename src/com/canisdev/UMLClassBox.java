@@ -106,6 +106,7 @@ public class UMLClassBox extends StackPane {
         setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         setMinSize(width, height);
 
+
         setSelected(true);
 
         //*********************************************************************
@@ -225,12 +226,7 @@ public class UMLClassBox extends StackPane {
             double offsetY = mouseEvent.getSceneY() - lastMousePosY;
 
             getScene().setCursor(Cursor.MOVE);
-            setTranslateX(getTranslateX() + offsetX);
-            setTranslateY(getTranslateY() + offsetY);
-
-            for (Relationship r : dependents){
-                r.fireEvent(new AnchorEvent(this));
-            }
+            translate(offsetX, offsetY);
 
             lastMousePosX = mouseEvent.getSceneX();
             lastMousePosY = mouseEvent.getSceneY();
@@ -242,12 +238,7 @@ public class UMLClassBox extends StackPane {
             double offsetY = mouseEvent.getSceneY() - lastMousePosY;
 
             getScene().setCursor(Cursor.MOVE);
-            setTranslateX(getTranslateX() + offsetX);
-            setTranslateY(getTranslateY() + offsetY);
-
-            for (Relationship r : dependents){
-                r.fireEvent(new AnchorEvent(this));
-            }
+            translate(offsetX, offsetY);
 
             lastMousePosX = mouseEvent.getSceneX();
             lastMousePosY = mouseEvent.getSceneY();
@@ -255,20 +246,49 @@ public class UMLClassBox extends StackPane {
         });
     }
 
-    public ArrayList<ResizeNode> getNodes (){
-        return new ArrayList<>(Arrays.asList(topLeft, top, topRight, right, bottomRight, bottom, bottomLeft, left));
+    public ArrayList<Point2D> getAnchorPoints() {
+        return new ArrayList<>(Arrays.asList(getTopAnchorPoint(), getRightAnchorPoint(), getBottomAnchorPoint(), getLeftAnchorPoint()));
+    }
+
+    public ArrayList<Point2D> getOppositeAnchorPoints() {
+        return new ArrayList<>(Arrays.asList(getBottomAnchorPoint(), getLeftAnchorPoint(), getTopAnchorPoint(), getRightAnchorPoint()));
     }
 
     public Point2D getLeftAnchorPoint () {
         double xpos = getTranslateX() + RESIZE_MARGIN;
-        double ypos = getTranslateY() + getHeight()/2 + RESIZE_MARGIN;
+        double ypos = getTranslateY() + getHeight()/2;
         return new Point2D(xpos, ypos);
     }
 
     public Point2D getRightAnchorPoint () {
-        double xpos = getTranslateX() + getWidth() - RESIZE_MARGIN;
-        double ypos = getTranslateY() + getHeight()/2 + RESIZE_MARGIN;
+        double xpos = getTranslateX() + getWidth() - RESIZE_MARGIN + SIDE_MARGIN/2;
+        double ypos = getTranslateY() + getHeight()/2;
         return new Point2D(xpos, ypos);
+    }
+
+    public Point2D getBottomAnchorPoint () {
+        double xpos = getTranslateX() + getWidth()/2;
+        double ypos = getTranslateY() + getHeight() - RESIZE_MARGIN + SIDE_MARGIN/2;
+        return new Point2D(xpos, ypos);
+    }
+
+    public Point2D getTopAnchorPoint () {
+        double xpos = getTranslateX() + getWidth()/2;
+        double ypos = getTranslateY() + RESIZE_MARGIN;
+        return new Point2D(xpos, ypos);
+    }
+
+    public void translate(double offsetX, double offsetY){
+        setTranslateX(getTranslateX() + offsetX);
+        setTranslateY(getTranslateY() + offsetY);
+
+        sendMoveEvent();
+    }
+
+    public void sendMoveEvent(){
+        for (Relationship r : dependents){
+            r.fireEvent(new AnchorEvent(this));
+        }
     }
 
     public void addDependentRelationship(Relationship r){

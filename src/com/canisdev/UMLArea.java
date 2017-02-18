@@ -23,6 +23,7 @@ public class UMLArea extends Pane {
     private double lastMousePosY;
     private boolean newBoxMode = false;
     private boolean newLineMode = false;
+    private int lineType;
 
     private ArrayList<UMLClassBox> boxes;
     private ArrayList<Relationship> relationships;
@@ -111,10 +112,9 @@ public class UMLArea extends Pane {
             double offsetY = mouseEvent.getSceneY() - lastMousePosY;
 
             //translate all boxes, lines will move w/ children
-            for (Node n : getChildren()){
+            for (UMLClassBox box : boxes){
                 //todo: let nodes do move in class method, so lines are moved too
-                n.setTranslateX(n.getTranslateX() + offsetX);
-                n.setTranslateY(n.getTranslateY() + offsetY);
+                box.translate(offsetX, offsetY);
             }
 
             lastMousePosX = mouseEvent.getSceneX();
@@ -158,13 +158,39 @@ public class UMLArea extends Pane {
         newLineMode = state;
     }
 
+    public void setLineType(int type){
+        lineType = type;
+    }
+
     private void newLine(){
         Relationship rel = new Relationship(lineParent1, lineParent2);
-
+        //base on switch value
+        switch (lineType){
+            case 0:
+                rel.setArrowShape();
+                break;
+            case 1:
+                rel.setEmptyArrowShape();
+                break;
+            case 2:
+                rel.setEmptyArrowShape();
+                rel.setDashedLine(true);
+                break;
+            case 3:
+                rel.setArrowShape();
+                rel.setDashedLine(true);
+                break;
+            case 4:
+                rel.setEmptyDiamondShape();
+                break;
+            case 5:
+                rel.setFullDiamondShape();
+                break;
+        }
         //todo: lineParent1/2 add dependent (line)
         //todo: on delete, also delete dependents
         //todo: on move/resize a box, find closest "anchor point" for a line on its parent
-        //todo: lines are not always on top
+        //todo: what is the logical depth ordering?
 
         getChildren().addAll(rel);
         relationships.add(rel);
