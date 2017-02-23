@@ -187,13 +187,12 @@ public class UMLArea extends Pane {
                 rel.setFullDiamondShape();
                 break;
         }
-        //todo: lineParent1/2 add dependent (line)
-        //todo: on delete, also delete dependents
-        //todo: on move/resize a box, find closest "anchor point" for a line on its parent
+
         //todo: what is the logical depth ordering?
 
         getChildren().addAll(rel);
         relationships.add(rel);
+        rel.toBack();
     }
 
     private void newBox(double xpos, double ypos){

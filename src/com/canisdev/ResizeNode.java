@@ -1,12 +1,12 @@
 package com.canisdev;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.shape.Circle;
 
-/**
- * Created by steve on 2/12/2017.
- */
+//A UMLClassBox has 8 ResizeNodes on its edges.
+//This scene object appears as a circle and
+//uses custom mouse event handlers to implement resizing
+//its parent UMLClassBox.
 
 public class ResizeNode extends Circle {
 
@@ -35,6 +35,8 @@ public class ResizeNode extends Circle {
         super(RADIUS);
 
         assert (resizeType >= 0 && resizeType <= 7);
+
+        //Sets the custom cursor for this resize type.
         switch (resizeType){
             case TOP_LEFT:
                 resizeMouseoverCursor = Cursor.NW_RESIZE;
@@ -69,6 +71,8 @@ public class ResizeNode extends Circle {
             mouseEvent.consume();
         });
 
+        //Mouse pressed handler performs setup to handle resizing
+        //that will occur when dragging begins.
         setOnMousePressed((mouseEvent) -> {
             lastMousePosX = mouseEvent.getSceneX();
             lastMousePosY = mouseEvent.getSceneY();
@@ -90,6 +94,7 @@ public class ResizeNode extends Circle {
             mouseEvent.consume();
         });
 
+        //Resize and translate the parent UMLClassBox based on which node is clicked.
         setOnMouseDragged((mouseEvent) -> {
             offsetX = mouseEvent.getSceneX() - lastMousePosX; //move right = positive offset
             offsetY = mouseEvent.getSceneY() - lastMousePosY; //move down = positive offset
@@ -132,10 +137,12 @@ public class ResizeNode extends Circle {
         });
     }
 
+    //Defines draw size of the circles.
     public static void setNodeRadius (double newRadius){
         RADIUS = newRadius;
     }
 
+    //Increases vertical box height and translates upward at an equal rate.
     private void resizeTop(){
         UMLClassBox parent = (UMLClassBox) getParent();
         parent.setPrefHeight(parent.getPrefHeight() - offsetY);
@@ -147,16 +154,19 @@ public class ResizeNode extends Circle {
         }
     }
 
+    //Increase horizontal box width; no translate.
     private void resizeRight(){
         UMLClassBox parent = (UMLClassBox) getParent();
         parent.setPrefWidth(parent.getPrefWidth() + offsetX);
     }
 
+    //Increase vertical box height; no translate;
     private void resizeBottom(){
         UMLClassBox parent = (UMLClassBox) getParent();
         parent.setPrefHeight(parent.getPrefHeight() + offsetY);
     }
 
+    //Increase horizontal box width and translate left.
     private void resizeLeft(){
         UMLClassBox parent = (UMLClassBox) getParent();
         parent.setPrefWidth(parent.getPrefWidth() - offsetX);

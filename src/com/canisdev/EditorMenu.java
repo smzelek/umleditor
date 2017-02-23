@@ -9,10 +9,6 @@ import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
-/**
- * Created by steve on 2/8/2017.
- */
-
 public class EditorMenu extends MenuBar {
 
     private String style1url = Main.class.getResource("Style1.css").toExternalForm();
@@ -96,6 +92,7 @@ public class EditorMenu extends MenuBar {
         setPrefWidth(Double.MAX_VALUE);
     }
 
+    //changes the custom CSS used to style FXML elements of the application
     public void useStyle (int styleNumber){
         getScene().getStylesheets().clear();
         getScene().getStylesheets().add(styleOptions.get(styleNumber));

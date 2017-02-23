@@ -1,6 +1,8 @@
+//TODO: examine states of de/focusing, mouse events, shift click multi-select
+//if add max resize limit of box, will need to add condition in resize node to prevent "lag"
+
 package com.canisdev;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -9,14 +11,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by steve on 2/7/2017.
- */
 public class UMLClassBox extends StackPane {
 
     private VBox contents;
@@ -32,10 +30,6 @@ public class UMLClassBox extends StackPane {
     public boolean isSelected;
     private ArrayList<Relationship> dependents;
 
-    //TODO: examine states of de/focusing, mouse events, shift click multi-select
-    //TODO: caret missing text area
-    //if add max resize limit of box, will need to add condition in resize node to prevent "lag"
-
     public UMLClassBox(double width, double height){
         super();
 
@@ -47,6 +41,7 @@ public class UMLClassBox extends StackPane {
         width += (SIDE_MARGIN+RESIZE_MARGIN)*2 + .1;
         height += (SIDE_MARGIN+RESIZE_MARGIN)*2 + .1;
 
+        //Add text areas of a UML Class Box: name, attributes, methods.
         nameArea = new TextField();
         nameArea.setPromptText("Name");
         nameArea.setAlignment(Pos.TOP_CENTER);
@@ -79,6 +74,8 @@ public class UMLClassBox extends StackPane {
         contents.setMaxHeight(Double.MAX_VALUE);
 
         ResizeNode.setNodeRadius(RESIZE_MARGIN);
+
+        //Add 8 resize nodes to decorate frame of UML Class Box.
 
         topLeft = new ResizeNode(ResizeNode.TOP_LEFT);
         setAlignment(topLeft, Pos.TOP_LEFT);
@@ -246,6 +243,7 @@ public class UMLClassBox extends StackPane {
         });
     }
 
+    //Fetches an array of possible linking points for a relationship.
     public ArrayList<Point2D> getAnchorPoints() {
         return new ArrayList<>(Arrays.asList(getTopAnchorPoint(), getRightAnchorPoint(), getBottomAnchorPoint(), getLeftAnchorPoint()));
     }
@@ -253,6 +251,9 @@ public class UMLClassBox extends StackPane {
     public ArrayList<Point2D> getOppositeAnchorPoints() {
         return new ArrayList<>(Arrays.asList(getBottomAnchorPoint(), getLeftAnchorPoint(), getTopAnchorPoint(), getRightAnchorPoint()));
     }
+
+    //Anchor point getters:
+    //******************
 
     public Point2D getLeftAnchorPoint () {
         double xpos = getTranslateX() + RESIZE_MARGIN;
@@ -278,6 +279,8 @@ public class UMLClassBox extends StackPane {
         return new Point2D(xpos, ypos);
     }
 
+
+    //Convenience method to shift scene object.
     public void translate(double offsetX, double offsetY){
         setTranslateX(getTranslateX() + offsetX);
         setTranslateY(getTranslateY() + offsetY);
@@ -285,16 +288,20 @@ public class UMLClassBox extends StackPane {
         sendMoveEvent();
     }
 
+    //Lets dependent relationships know that they must adjust
+    //their endpoints, size, and rotation.
     public void sendMoveEvent(){
         for (Relationship r : dependents){
             r.fireEvent(new AnchorEvent(this));
         }
     }
 
+    //Keep track of attached relationship objects.
     public void addDependentRelationship(Relationship r){
         dependents.add(r);
     }
 
+    //Change appearance to indicate selection, allows resizing and deleting.
     public void setSelected (boolean state) {
         isSelected = state;
         if (state) {
@@ -307,7 +314,6 @@ public class UMLClassBox extends StackPane {
             right.setVisible(true);
             top.setVisible(true);
             bottom.setVisible(true);
-            //set circle resize nodes visible
         } else {
             topLeft.setVisible(false);
             topRight.setVisible(false);
@@ -317,7 +323,6 @@ public class UMLClassBox extends StackPane {
             right.setVisible(false);
             top.setVisible(false);
             bottom.setVisible(false);
-            //set circle resize nodes invisible
         }
     }
 }
