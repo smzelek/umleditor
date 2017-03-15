@@ -5,6 +5,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 
@@ -21,12 +23,21 @@ public class UMLArea extends Pane {
 
     private double lastMousePosX;
     private double lastMousePosY;
+
+    //added for selection tool - andrew
+    private double rectCornerX;
+    private double rectCornerY;
+    private double movCornerX;
+    private double movCornerY;
+
     private boolean newBoxMode = false;
     private boolean newLineMode = false;
+    private boolean selectionMode = false;// selection tool
     private int lineType;
 
     private ArrayList<UMLClassBox> boxes;
     private ArrayList<Relationship> relationships;
+    private Rectangle selectionArea;//selection tool
 
     private UMLClassBox lineParent1;
     private UMLClassBox lineParent2;
@@ -70,8 +81,17 @@ public class UMLArea extends Pane {
                 lastMousePosX = mouseEvent.getSceneX();
                 lastMousePosY = mouseEvent.getSceneY();
 
+
                 clearSelections();
                 getScene().setCursor(Cursor.MOVE);
+            }
+
+            //todo: cleaning selection tool code in progress
+            if (selectionMode) {
+                rectCornerX = lastMousePosX;
+                rectCornerY = lastMousePosY;
+
+                getScene().setCursor(Cursor.CLOSED_HAND);
             }
 
             requestFocus();
@@ -100,6 +120,14 @@ public class UMLArea extends Pane {
                     }
                 }
             }
+            else if (selectionMode) {
+
+                getChildren().remove(selectionArea);
+                selectionArea = null;
+                setSelectionMode(false);
+
+            }
+
             getScene().setCursor(Cursor.DEFAULT);
             mouseEvent.consume();
         });
@@ -108,17 +136,72 @@ public class UMLArea extends Pane {
             if (newBoxMode || newLineMode){
                 return;
             }
-            double offsetX = mouseEvent.getSceneX() - lastMousePosX;
-            double offsetY = mouseEvent.getSceneY() - lastMousePosY;
 
-            //translate all boxes, lines will move w/ children
-            for (UMLClassBox box : boxes){
-                //todo: let nodes do move in class method, so lines are moved too
-                box.translate(offsetX, offsetY);
+            if (!selectionMode) {
+                double offsetX = mouseEvent.getSceneX() - lastMousePosX;
+                double offsetY = mouseEvent.getSceneY() - lastMousePosY;
+
+                //translate all boxes, lines will move w/ children
+                for (UMLClassBox box : boxes){
+                    //todo: let nodes do move in class method, so lines are moved too
+                    box.translate(offsetX, offsetY);
+                }
+            }
+
+            //todo: cleaning in progress - andrew
+            if (selectionMode) {
+                movCornerX = mouseEvent.getSceneX();
+                movCornerY = mouseEvent.getSceneY();
+
+
+                double xPos = Math.min(movCornerX, rectCornerX);
+                double yPos = Math.min(movCornerY, rectCornerY);
+                double height = Math.abs(movCornerY - rectCornerY);
+                double width = Math.abs(movCornerX - rectCornerX);
+
+                if (selectionArea == null) {
+                    selectionArea = new Rectangle(xPos, yPos, width, height);
+                    getChildren().add(selectionArea);
+                } else {
+                    selectionArea.setX(xPos);
+                    selectionArea.setY(yPos);
+                    selectionArea.setWidth(width);
+                    selectionArea.setHeight(height);
+                }
+
+                selectionArea.setFill(Color.TRANSPARENT);
+                selectionArea.setStroke(Color.BLACK);
+                selectionArea.getStrokeDashArray().setAll(10.0, 10.0);
+
+                double minX = selectionArea.getX();
+                double maxX = minX + selectionArea.getWidth();
+                double minY = selectionArea.getY();
+                double maxY = minY + selectionArea.getHeight();
+
+
+                for (UMLClassBox n : boxes) {
+
+
+                    double leftBound = n.getLeftAnchorPoint().getX();
+                    double rightBound = n.getRightAnchorPoint().getX();
+                    double topBound = n.getTopAnchorPoint().getY();
+                    double bottomBound = n.getBottomAnchorPoint().getY();
+
+                    if (leftBound <= maxX && rightBound >= minX && topBound <= maxY && bottomBound >= minY) {
+                        n.setSelected(true);
+                    } else {
+                        n.setSelected(false);
+                    }
+
+                }
+
+
             }
 
             lastMousePosX = mouseEvent.getSceneX();
             lastMousePosY = mouseEvent.getSceneY();
+
+
             mouseEvent.consume();
         });
     }
@@ -139,6 +222,7 @@ public class UMLArea extends Pane {
     public void setNewBoxMode(boolean state){
         if (state){
             newLineMode = false;
+            selectionMode = false;
         }
         for (Node n :getChildren()){
             n.setMouseTransparent(state);
@@ -149,6 +233,7 @@ public class UMLArea extends Pane {
     public void setNewLineMode(boolean state){
         if (state){
             newBoxMode = false;
+            selectionMode = false;
             lineParent1 = null;
             lineParent2 = null;
         }
@@ -156,6 +241,19 @@ public class UMLArea extends Pane {
             n.setMouseTransparent(state);
         }
         newLineMode = state;
+    }
+
+    //ADDED BY ANDREW
+    public void setSelectionMode(boolean state) {
+        if (state) {
+            newBoxMode = false;
+            newLineMode = false;
+        }
+
+        for (Node n :getChildren()){
+            n.setMouseTransparent(state);
+        }
+        selectionMode = state;
     }
 
     public void setLineType(int type){
