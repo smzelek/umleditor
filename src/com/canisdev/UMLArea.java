@@ -25,10 +25,10 @@ public class UMLArea extends Pane {
     private double lastMousePosY;
 
     //added for selection tool - andrew
-    private double rectCornerX;
-    private double rectCornerY;
-    private double movCornerX;
-    private double movCornerY;
+    private double firstCornerX;
+    private double firstCornerY;
+    private double secondCornerX;
+    private double secondCornerY;
 
     private boolean newBoxMode = false;
     private boolean newLineMode = false;
@@ -88,8 +88,9 @@ public class UMLArea extends Pane {
 
             //todo: cleaning selection tool code in progress
             if (selectionMode) {
-                rectCornerX = lastMousePosX;
-                rectCornerY = lastMousePosY;
+                //set first corner of selectionArea
+                firstCornerX = lastMousePosX;
+                firstCornerY = lastMousePosY;
 
                 getScene().setCursor(Cursor.CLOSED_HAND);
             }
@@ -147,54 +148,33 @@ public class UMLArea extends Pane {
                     box.translate(offsetX, offsetY);
                 }
             }
+            else
+            {
+                //get second corner from drag event
+                secondCornerX = mouseEvent.getSceneX();
+                secondCornerY = mouseEvent.getSceneY();
 
-            //todo: cleaning in progress - andrew
-            if (selectionMode) {
-                movCornerX = mouseEvent.getSceneX();
-                movCornerY = mouseEvent.getSceneY();
-
-
-                double xPos = Math.min(movCornerX, rectCornerX);
-                double yPos = Math.min(movCornerY, rectCornerY);
-                double height = Math.abs(movCornerY - rectCornerY);
-                double width = Math.abs(movCornerX - rectCornerX);
+                //position of rectangle is (x, y) of top left corner
+                //will always be min values of corner coordinates
+                double xPos = Math.min(secondCornerX, firstCornerX);
+                double yPos = Math.min(secondCornerY, firstCornerY);
+                double height = Math.abs(secondCornerY - firstCornerY);
+                double width = Math.abs(secondCornerX - firstCornerX);
 
                 if (selectionArea == null) {
-                    selectionArea = new Rectangle(xPos, yPos, width, height);
+
+                    initSelectionArea(xPos, yPos, width, height);
                     getChildren().add(selectionArea);
+
                 } else {
-                    selectionArea.setX(xPos);
-                    selectionArea.setY(yPos);
-                    selectionArea.setWidth(width);
-                    selectionArea.setHeight(height);
+
+                    setSelectionArea(xPos, yPos, width, height);
                 }
 
-                selectionArea.setFill(Color.TRANSPARENT);
-                selectionArea.setStroke(Color.BLACK);
-                selectionArea.getStrokeDashArray().setAll(10.0, 10.0);
+                double maxX = xPos + width;
+                double maxY = yPos + height;
 
-                double minX = selectionArea.getX();
-                double maxX = minX + selectionArea.getWidth();
-                double minY = selectionArea.getY();
-                double maxY = minY + selectionArea.getHeight();
-
-
-                for (UMLClassBox n : boxes) {
-
-
-                    double leftBound = n.getLeftAnchorPoint().getX();
-                    double rightBound = n.getRightAnchorPoint().getX();
-                    double topBound = n.getTopAnchorPoint().getY();
-                    double bottomBound = n.getBottomAnchorPoint().getY();
-
-                    if (leftBound <= maxX && rightBound >= minX && topBound <= maxY && bottomBound >= minY) {
-                        n.setSelected(true);
-                    } else {
-                        n.setSelected(false);
-                    }
-
-                }
-
+                selectBoxesInArea(xPos, maxX, yPos, maxY);
 
             }
 
@@ -243,7 +223,10 @@ public class UMLArea extends Pane {
         newLineMode = state;
     }
 
-    //ADDED BY ANDREW
+    /**
+     * Allows graphical button to change state to Selection mode
+     * @param state Boolean value to toggle state
+     */
     public void setSelectionMode(boolean state) {
         if (state) {
             newBoxMode = false;
@@ -310,6 +293,67 @@ public class UMLArea extends Pane {
     public void clearSelections(){
         for (UMLClassBox n : boxes){
             n.setSelected(false);
+        }
+    }
+
+    //encapsulating selectionArea code
+
+    /**
+     * Initializes new selectionArea Rectangle with position, width, and height
+     * Initialized selectionArea will have a black, dashed border
+     * @param xPos X coordinate of top left corner
+     * @param yPos Y coordinate of top left corner
+     * @param width Rectangle width
+     * @param height Rectangle height
+     */
+    private void initSelectionArea(double xPos, double yPos, double width, double height) {
+        selectionArea = new Rectangle(xPos, yPos, width, height);
+        selectionArea.setFill(Color.TRANSPARENT);
+        selectionArea.setStroke(Color.BLACK);
+        selectionArea.getStrokeDashArray().setAll(10.0, 10.0);
+    }
+
+    /**
+     * Modifies selectionArea's position in parent, width, and height
+     * @param xPos New X coordinate of top left corner
+     * @param yPos New Y coordinate of top left corner
+     * @param width New width
+     * @param height New height
+     */
+    private void setSelectionArea(double xPos, double yPos, double width, double height) {
+        selectionArea.setX(xPos);
+        selectionArea.setY(yPos);
+        selectionArea.setWidth(width);
+        selectionArea.setHeight(height);
+    }
+
+    /**
+     * Selects instances of UMLClassBox class, if any, in bounds given as arguments
+     * Preconditions:
+     *   * minX <= maxX
+     *   * minY <= maxY
+     * Postcondition: any UMLClassBox instances occupying space in coordinates
+     * ([minX, maxX], [minY, maxY]) within parent are now selected
+     * @param minX Minimum parent x coordinate
+     * @param maxX Maximum parent x coordinate
+     * @param minY Minimum parent y coordinate
+     * @param maxY Maximum parent y coordinate
+     */
+    private void selectBoxesInArea(double minX, double maxX, double minY, double maxY) {
+
+        for (UMLClassBox n : boxes) {
+
+            double leftBound = n.getLeftAnchorPoint().getX();
+            double rightBound = n.getRightAnchorPoint().getX();
+            double topBound = n.getTopAnchorPoint().getY();
+            double bottomBound = n.getBottomAnchorPoint().getY();
+
+            if (leftBound <= maxX && rightBound >= minX && topBound <= maxY && bottomBound >= minY) {
+                n.setSelected(true);
+            } else {
+                n.setSelected(false);
+            }
+
         }
     }
 
