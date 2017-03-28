@@ -7,8 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bdd5d4e1-1141-4c2d-9a40-16fa48ee7b2a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/canisdev/UMLArea.java" afterPath="$PROJECT_DIR$/src/com/canisdev/UMLArea.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/canisdev/ButtonTray.java" afterPath="$PROJECT_DIR$/src/com/canisdev/ButtonTray.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -37,7 +36,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UMLArea.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="UMLArea.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/canisdev/UMLArea.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="5648">
@@ -59,11 +58,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ButtonTray.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ButtonTray.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/canisdev/ButtonTray.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="56" column="146" lean-forward="false" selection-start-line="56" selection-start-column="146" selection-end-line="56" selection-end-column="146" />
+            <state relative-caret-position="209">
+              <caret line="48" column="51" lean-forward="true" selection-start-line="48" selection-start-column="51" selection-end-line="48" selection-end-column="51" />
               <folding />
             </state>
           </provider>
@@ -178,8 +177,8 @@
         <option value="$PROJECT_DIR$/src/com/canisdev/ResizeNode.java" />
         <option value="$PROJECT_DIR$/src/com/canisdev/Relationship.java" />
         <option value="$PROJECT_DIR$/src/com/canisdev/UMLClassBox.java" />
-        <option value="$PROJECT_DIR$/src/com/canisdev/ButtonTray.java" />
         <option value="$PROJECT_DIR$/src/com/canisdev/UMLArea.java" />
+        <option value="$PROJECT_DIR$/src/com/canisdev/ButtonTray.java" />
       </list>
     </option>
   </component>
@@ -504,16 +503,16 @@
       <workItem from="1489517733668" duration="3378000" />
       <workItem from="1489527784278" duration="4645000" />
       <workItem from="1490019225681" duration="123000" />
-      <workItem from="1490668665035" duration="4812000" />
+      <workItem from="1490668665035" duration="6431000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="36226000" />
+    <option name="totallyTimeSpent" value="37845000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -525,7 +524,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32898173" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329429" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21018277" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21018277" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -932,14 +931,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/canisdev/ButtonTray.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="56" column="146" lean-forward="false" selection-start-line="56" selection-start-column="146" selection-end-line="56" selection-end-column="146" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/canisdev/UMLArea.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5648">
@@ -947,6 +938,14 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/canisdev/ButtonTray.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="48" column="51" lean-forward="true" selection-start-line="48" selection-start-column="51" selection-end-line="48" selection-end-column="51" />
+          <folding />
         </state>
       </provider>
     </entry>

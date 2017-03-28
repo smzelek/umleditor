@@ -27,6 +27,7 @@ public class ButtonTray extends HBox {
         ImageView dependencyIcon = new ImageView(new Image(getClass().getResourceAsStream("img/dependency.png")));
         ImageView aggregationIcon = new ImageView(new Image(getClass().getResourceAsStream("img/aggregation.png")));
         ImageView compositionIcon = new ImageView(new Image(getClass().getResourceAsStream("img/composition.png")));
+        ImageView selectionIcon = new ImageView(new Image(getClass().getResourceAsStream("img/selection.png")));
 
 
         Button btn = new Button();
@@ -50,9 +51,8 @@ public class ButtonTray extends HBox {
         Button compositionBtn = new Button();
         compositionBtn.setGraphic(compositionIcon);
 
-        //testing
-        Button selectionBtn = new Button("Selection Mode");
-        //selectionBtn.setGraphic(selectionTool); //set image when added
+        Button selectionBtn = new Button();
+        selectionBtn.setGraphic(selectionIcon);
 
         getChildren().addAll(btn, associationBtn, inheritanceBtn, implementationBtn, dependencyBtn, aggregationBtn, compositionBtn, selectionBtn);
 
