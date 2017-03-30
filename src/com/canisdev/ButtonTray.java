@@ -27,6 +27,7 @@ public class ButtonTray extends HBox {
         ImageView dependencyIcon = new ImageView(new Image(getClass().getResourceAsStream("img/dependency.png")));
         ImageView aggregationIcon = new ImageView(new Image(getClass().getResourceAsStream("img/aggregation.png")));
         ImageView compositionIcon = new ImageView(new Image(getClass().getResourceAsStream("img/composition.png")));
+        ImageView selectionIcon = new ImageView(new Image(getClass().getResourceAsStream("img/selection.png")));
 
 
         Button btn = new Button();
@@ -50,8 +51,10 @@ public class ButtonTray extends HBox {
         Button compositionBtn = new Button();
         compositionBtn.setGraphic(compositionIcon);
 
+        Button selectionBtn = new Button();
+        selectionBtn.setGraphic(selectionIcon);
 
-        getChildren().addAll(btn, associationBtn, inheritanceBtn, implementationBtn, dependencyBtn, aggregationBtn, compositionBtn);
+        getChildren().addAll(btn, associationBtn, inheritanceBtn, implementationBtn, dependencyBtn, aggregationBtn, compositionBtn, selectionBtn);
 
         for (Node n : getChildren()){
             ((Button) n).setPrefWidth(100);
@@ -59,6 +62,10 @@ public class ButtonTray extends HBox {
         }
 
         //Set up event handlers for button clicks.
+        selectionBtn.setOnAction((actionEvent) -> {
+            umlArea.setSelectionMode(true);
+            umlArea.clearSelections();
+        });
 
         btn.setOnAction((actionEvent) -> {
             umlArea.setNewBoxMode(true);
