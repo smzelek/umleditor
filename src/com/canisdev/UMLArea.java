@@ -235,13 +235,13 @@ public class UMLArea extends Pane {
         if (state) {
             newBoxMode = false;
             newLineMode = false;
+            clearSelections();
         }
 
         for (Node n :getChildren()){
             n.setMouseTransparent(state);
         }
         selectionMode = state;
-        clearSelections();
     }
 
     public void setLineType(int type){

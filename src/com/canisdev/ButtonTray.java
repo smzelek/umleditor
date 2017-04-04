@@ -17,11 +17,13 @@ public class ButtonTray extends HBox {
 
     public ButtonTray (UMLArea umlArea) {
         super();
-        setPrefWidth(Double.MAX_VALUE);
+        //setPrefWidth(Double.MAX_VALUE);
         setStyle("-fx-background-color:#A0A0A0;-fx-border-color:black; -fx-border-width:1 0 0 0; -fx-border-style:solid;");
         setAlignment(Pos.CENTER);
         setPadding(new Insets(10, 5, 10, 5));
         setSpacing(5);
+
+        this.umlArea = umlArea;
 
         //Icons for all buttons.
         ImageView boxIcon = new ImageView(new Image(getClass().getResourceAsStream("img/box.png")));

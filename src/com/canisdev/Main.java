@@ -30,6 +30,8 @@ public class Main extends Application {
 
         primaryStage.setResizable(true);
         primaryStage.setScene(scene);
+
+        primaryStage.sizeToScene();
         primaryStage.show();
 
         editorMenu.useStyle(0);
