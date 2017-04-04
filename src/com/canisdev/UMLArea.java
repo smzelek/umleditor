@@ -24,7 +24,7 @@ public class UMLArea extends Pane {
     private double lastMousePosX;
     private double lastMousePosY;
 
-    //added for selection tool - andrew
+    private Rectangle selectionArea;
     private double firstCornerX;
     private double firstCornerY;
     private double secondCornerX;
@@ -32,12 +32,12 @@ public class UMLArea extends Pane {
 
     private boolean newBoxMode = false;
     private boolean newLineMode = false;
-    private boolean selectionMode = false;// selection tool
+    private boolean selectionMode = false;
+
     private int lineType;
 
     private ArrayList<UMLClassBox> boxes;
     private ArrayList<Relationship> relationships;
-    private Rectangle selectionArea;//selection tool
 
     private UMLClassBox lineParent1;
     private UMLClassBox lineParent2;
@@ -86,7 +86,7 @@ public class UMLArea extends Pane {
                 getScene().setCursor(Cursor.MOVE);
             }
 
-            //todo: cleaning selection tool code in progress
+
             if (selectionMode) {
                 //set first corner of selectionArea
                 firstCornerX = lastMousePosX;
@@ -295,8 +295,6 @@ public class UMLArea extends Pane {
             n.setSelected(false);
         }
     }
-
-    //encapsulating selectionArea code
 
     /**
      * Initializes new selectionArea Rectangle with position, width, and height
