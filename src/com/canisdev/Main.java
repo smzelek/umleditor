@@ -7,17 +7,21 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    public EditorMenu editorMenu;
+    public UMLArea umlArea;
+    public ButtonTray buttonTray;
+
     @Override
     public void start(Stage primaryStage){
         primaryStage.setTitle("CANIS UML Editor 1.0");
 
-        EditorMenu topMenu = new EditorMenu();
-        UMLArea umlArea = new UMLArea();
-        ButtonTray buttonTray = new ButtonTray(umlArea);
+        editorMenu = new EditorMenu();
+        umlArea = new UMLArea();
+        buttonTray = new ButtonTray(umlArea);
 
         BorderPane root = new BorderPane();
         root.setCenter(umlArea);
-        root.setTop(topMenu);
+        root.setTop(editorMenu);
         root.setBottom(buttonTray);
 
         Scene scene = new Scene(root, 400,450);
@@ -28,7 +32,7 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        topMenu.useStyle(0);
+        editorMenu.useStyle(0);
     }
 
     public static void main(String[] args) {

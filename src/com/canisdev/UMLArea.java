@@ -207,6 +207,8 @@ public class UMLArea extends Pane {
         for (Node n :getChildren()){
             n.setMouseTransparent(state);
         }
+
+        clearSelections();
         newBoxMode = state;
     }
 
@@ -220,6 +222,8 @@ public class UMLArea extends Pane {
         for (Node n :getChildren()){
             n.setMouseTransparent(state);
         }
+
+        clearSelections();
         newLineMode = state;
     }
 
@@ -237,6 +241,7 @@ public class UMLArea extends Pane {
             n.setMouseTransparent(state);
         }
         selectionMode = state;
+        clearSelections();
     }
 
     public void setLineType(int type){
@@ -276,7 +281,7 @@ public class UMLArea extends Pane {
         rel.toBack();
     }
 
-    private void newBox(double xpos, double ypos){
+    public void newBox(double xpos, double ypos){
         int boxWidth = 120;
         int boxHeight = 160;
         UMLClassBox myBox = new UMLClassBox(boxWidth, boxHeight);
@@ -356,5 +361,4 @@ public class UMLArea extends Pane {
 
         }
     }
-
 }

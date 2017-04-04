@@ -1,5 +1,6 @@
 package com.canisdev;
 
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -10,6 +11,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 public class ButtonTray extends HBox {
+
+    private UMLArea umlArea;
 
     public ButtonTray (UMLArea umlArea) {
         super();
@@ -62,57 +65,58 @@ public class ButtonTray extends HBox {
         }
 
         //Set up event handlers for button clicks.
-        selectionBtn.setOnAction((actionEvent) -> {
-            umlArea.setSelectionMode(true);
-            umlArea.clearSelections();
-        });
+        selectionBtn.setOnAction(this::clickSelectionBtn);
+        btn.setOnAction(this::clickNewBoxBtn);
+        associationBtn.setOnAction(this::clickAssociationBtn);
+        inheritanceBtn.setOnAction(this::clickInheritanceBtn);
+        implementationBtn.setOnAction(this::clickImplementationBtn);
+        dependencyBtn.setOnAction(this::clickDependencyBtn);
+        aggregationBtn.setOnAction(this::clickAggregationBtn);
+        compositionBtn.setOnAction(this::clickCompositionBtn);
+    }
 
-        btn.setOnAction((actionEvent) -> {
-            umlArea.setNewBoxMode(true);
-            umlArea.clearSelections();
-            getScene().setCursor(Cursor.CROSSHAIR);
-        });
+    public void clickSelectionBtn (ActionEvent actionEvent) {
+        umlArea.setSelectionMode(true);
+    }
 
-        associationBtn.setOnAction((actionEvent) -> {
-            umlArea.setNewLineMode(true);
-            umlArea.setLineType(0);
-            umlArea.clearSelections();
-            getScene().setCursor(Cursor.CROSSHAIR);
-        });
+    public void clickNewBoxBtn (ActionEvent actionEvent) {
+        umlArea.setNewBoxMode(true);
+        getScene().setCursor(Cursor.CROSSHAIR);
+    }
 
-        inheritanceBtn.setOnAction((actionEvent) -> {
-            umlArea.setNewLineMode(true);
-            umlArea.setLineType(1);
-            umlArea.clearSelections();
-            getScene().setCursor(Cursor.CROSSHAIR);
-        });
+    public void clickAssociationBtn (ActionEvent actionEvent) {
+        umlArea.setNewLineMode(true);
+        umlArea.setLineType(0);
+        getScene().setCursor(Cursor.CROSSHAIR);
+    }
 
-        implementationBtn.setOnAction((actionEvent) -> {
-            umlArea.setNewLineMode(true);
-            umlArea.setLineType(2);
-            umlArea.clearSelections();
-            getScene().setCursor(Cursor.CROSSHAIR);
-        });
+    public void clickInheritanceBtn (ActionEvent actionEvent) {
+        umlArea.setNewLineMode(true);
+        umlArea.setLineType(1);
+        getScene().setCursor(Cursor.CROSSHAIR);
+    }
 
-        dependencyBtn.setOnAction((actionEvent) -> {
-            umlArea.setNewLineMode(true);
-            umlArea.setLineType(3);
-            umlArea.clearSelections();
-            getScene().setCursor(Cursor.CROSSHAIR);
-        });
+    public void clickCompositionBtn (ActionEvent actionEvent) {
+        umlArea.setNewLineMode(true);
+        umlArea.setLineType(5);
+        getScene().setCursor(Cursor.CROSSHAIR);
+    }
 
-        aggregationBtn.setOnAction((actionEvent) -> {
-            umlArea.setNewLineMode(true);
-            umlArea.setLineType(4);
-            umlArea.clearSelections();
-            getScene().setCursor(Cursor.CROSSHAIR);
-        });
+    public void clickAggregationBtn (ActionEvent actionEvent) {
+        umlArea.setNewLineMode(true);
+        umlArea.setLineType(4);
+        getScene().setCursor(Cursor.CROSSHAIR);
+    }
 
-        compositionBtn.setOnAction((actionEvent) -> {
-            umlArea.setNewLineMode(true);
-            umlArea.setLineType(5);
-            umlArea.clearSelections();
-            getScene().setCursor(Cursor.CROSSHAIR);
-        });
+    public void clickDependencyBtn (ActionEvent actionEvent) {
+        umlArea.setNewLineMode(true);
+        umlArea.setLineType(3);
+        getScene().setCursor(Cursor.CROSSHAIR);
+    }
+
+    public void clickImplementationBtn (ActionEvent actionEvent) {
+        umlArea.setNewLineMode(true);
+        umlArea.setLineType(2);
+        getScene().setCursor(Cursor.CROSSHAIR);
     }
 }
