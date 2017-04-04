@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.control.Tooltip;
 
 public class ButtonTray extends HBox {
 
@@ -27,34 +28,38 @@ public class ButtonTray extends HBox {
         ImageView dependencyIcon = new ImageView(new Image(getClass().getResourceAsStream("img/dependency.png")));
         ImageView aggregationIcon = new ImageView(new Image(getClass().getResourceAsStream("img/aggregation.png")));
         ImageView compositionIcon = new ImageView(new Image(getClass().getResourceAsStream("img/composition.png")));
-        ImageView selectionIcon = new ImageView(new Image(getClass().getResourceAsStream("img/selection.png")));
 
 
         Button btn = new Button();
         btn.setGraphic(boxIcon);
+        btn.setTooltip(new Tooltip("Create a new Class Box"));
 
         Button associationBtn = new Button();
         associationBtn.setGraphic(associationIcon);
+        associationBtn.setTooltip(new Tooltip("Add Association"));
 
         Button inheritanceBtn = new Button();
         inheritanceBtn.setGraphic(inheritanceIcon);
+        inheritanceBtn.setTooltip(new Tooltip("Add Inheritance"));
 
         Button implementationBtn = new Button();
         implementationBtn.setGraphic(implementationIcon);
+        implementationBtn.setTooltip(new Tooltip("Add Implementation"));
 
         Button dependencyBtn = new Button();
         dependencyBtn.setGraphic(dependencyIcon);
+        dependencyBtn.setTooltip(new Tooltip("Add Dependency"));
 
         Button aggregationBtn = new Button();
         aggregationBtn.setGraphic(aggregationIcon);
+        aggregationBtn.setTooltip(new Tooltip("Add Aggregation"));
 
         Button compositionBtn = new Button();
         compositionBtn.setGraphic(compositionIcon);
+        compositionBtn.setTooltip(new Tooltip("Add Composition"));
 
-        Button selectionBtn = new Button();
-        selectionBtn.setGraphic(selectionIcon);
 
-        getChildren().addAll(btn, associationBtn, inheritanceBtn, implementationBtn, dependencyBtn, aggregationBtn, compositionBtn, selectionBtn);
+        getChildren().addAll(btn, associationBtn, inheritanceBtn, implementationBtn, dependencyBtn, aggregationBtn, compositionBtn);
 
         for (Node n : getChildren()){
             ((Button) n).setPrefWidth(100);
@@ -62,10 +67,6 @@ public class ButtonTray extends HBox {
         }
 
         //Set up event handlers for button clicks.
-        selectionBtn.setOnAction((actionEvent) -> {
-            umlArea.setSelectionMode(true);
-            umlArea.clearSelections();
-        });
 
         btn.setOnAction((actionEvent) -> {
             umlArea.setNewBoxMode(true);
