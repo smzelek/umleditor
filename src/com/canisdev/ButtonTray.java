@@ -90,47 +90,41 @@ public class ButtonTray extends HBox {
     }
 
     public void clickSelectionBtn (ActionEvent actionEvent) {
-        umlArea.setSelectionMode(true);
+        umlArea.setSelectionMode();
     }
 
     public void clickNewBoxBtn (ActionEvent actionEvent) {
-        umlArea.setNewBoxMode(true);
+        umlArea.setNewBoxMode();
         getScene().setCursor(Cursor.CROSSHAIR);
     }
 
     public void clickAssociationBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(true);
-        umlArea.setLineType(0);
+        umlArea.setNewLineMode(0);
         getScene().setCursor(Cursor.CROSSHAIR);
     }
 
     public void clickInheritanceBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(true);
-        umlArea.setLineType(1);
+        umlArea.setNewLineMode(1);
         getScene().setCursor(Cursor.CROSSHAIR);
     }
 
     public void clickCompositionBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(true);
-        umlArea.setLineType(5);
+        umlArea.setNewLineMode(5);
         getScene().setCursor(Cursor.CROSSHAIR);
     }
 
     public void clickAggregationBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(true);
-        umlArea.setLineType(4);
+        umlArea.setNewLineMode(4);
         getScene().setCursor(Cursor.CROSSHAIR);
     }
 
     public void clickDependencyBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(true);
-        umlArea.setLineType(3);
+        umlArea.setNewLineMode(3);
         getScene().setCursor(Cursor.CROSSHAIR);
     }
 
     public void clickImplementationBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(true);
-        umlArea.setLineType(2);
+        umlArea.setNewLineMode(2);
         getScene().setCursor(Cursor.CROSSHAIR);
     }
 }

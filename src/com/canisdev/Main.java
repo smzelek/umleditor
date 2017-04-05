@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-
     @Override
     public void start(Stage primaryStage){
         primaryStage.setTitle("CANIS UML Editor 1.0");
@@ -18,7 +17,6 @@ public class Main extends Application {
         primaryStage.setResizable(true);
         primaryStage.setScene(scene);
         primaryStage.show();
-
     }
 
     public static class UMLEditor extends BorderPane {
@@ -29,7 +27,6 @@ public class Main extends Application {
         public UMLEditor() {
             super();
             editorMenu = new EditorMenu();
-            //editorMenu.useStyle(0);
             umlArea = new UMLArea();
             buttonTray = new ButtonTray(umlArea);
 

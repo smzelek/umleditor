@@ -10,6 +10,9 @@ import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
+/**
+ *
+ */
 public class EditorMenu extends MenuBar {
 
     private String style1url = Main.class.getResource("Style1.css").toExternalForm();
@@ -17,9 +20,7 @@ public class EditorMenu extends MenuBar {
     private ArrayList<String> styleOptions;
 
     public EditorMenu (){
-
         super();
-
 
         styleOptions = new ArrayList<>();
         styleOptions.add(style1url);
@@ -29,6 +30,7 @@ public class EditorMenu extends MenuBar {
            useStyle(0);
         });
 
+        //Icons to be used for some menu items.
         Image newFileIcon = new Image(getClass().getResourceAsStream("img/newfileicon.png"));
         ImageView newFileView = new ImageView(newFileIcon);
 
@@ -44,9 +46,10 @@ public class EditorMenu extends MenuBar {
         Image exitIcon = new Image(getClass().getResourceAsStream("img/exiticon.png"));
         ImageView exitView = new ImageView(exitIcon);
 
-        /* FILE MENU */
+
+        //**********************************************
+        // FILE MENU
         Menu fileButton = new Menu("File");
-        //new, open, save, settings, exit
         MenuItem newFile = new MenuItem("New");
         newFile.setGraphic(newFileView);
         fileButton.getItems().addAll(newFile);
@@ -70,15 +73,21 @@ public class EditorMenu extends MenuBar {
         exit.setOnAction((actionEvent) -> {
             getScene().getWindow().fireEvent(new WindowEvent(getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST));
         });
+        // END OF FILE MENU
+        //*************************************************
 
-        /* END OF FILE MENU*/
 
-        /*EDIT MENU*/
+
+        // EDIT MENU
+        //*************************************************
         Menu menuEdit = new Menu("Edit");
-        /*END OF EDIT MENU*/
+        // END OF EDIT MENU
+        //*************************************************
 
-        /*VIEW MENU*/
 
+
+        //*************************************************
+        // VIEW MENU
         Menu menuView = new Menu("View");
         Menu styleOptions = new Menu("Themes");
         MenuItem style0 = new MenuItem("Default");
@@ -93,16 +102,21 @@ public class EditorMenu extends MenuBar {
 
         styleOptions.getItems().addAll(style0, style1);
         menuView.getItems().addAll(styleOptions);
-        /*END OF VIEW MENU*/
+        // END OF VIEW MENU
+        //**********************************************
+
 
         getMenus().addAll(fileButton, menuEdit, menuView);
-        setPrefWidth(Double.MAX_VALUE);
     }
 
-    //changes the custom CSS used to style FXML elements of the application
+    /**
+     * Changes the custom CSS used to style FXML elements of
+     * the application by indicating which loaded stylesheet
+     * should be used.
+     * @param styleNumber - index of the stylesheet to swap to
+     */
     public void useStyle (int styleNumber){
         getScene().getStylesheets().clear();
         getScene().getStylesheets().add(styleOptions.get(styleNumber));
     }
-
 }

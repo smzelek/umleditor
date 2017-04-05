@@ -12,6 +12,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 
+/**
+ *
+ */
 public class Relationship extends Group {
 
     private UMLClassBox parent;
@@ -21,49 +24,57 @@ public class Relationship extends Group {
     private Rotate rzArrowHead;
     private double arrowRotationOffset = 90;
 
+    /**
+     * Bidirectional data relationship with a GUI component.
+     * The endpoints of a relationship hold a pointer
+     * to the relationship, which is used to delete the relationship
+     * when that endpoint is deleted.
+     *
+     * The relationship also handles movement events of its endpoints
+     * with the pointers.
+     *
+     * @param parent
+     * @param child
+     */
     public Relationship(UMLClassBox parent, UMLClassBox child){
         super();
 
         this.parent = parent;
         this.child = child;
 
-        //Bidirectional data relationship.
-        //Endpoints also have a pointer to the relationship.
-        //Used for deletion of an endpoint.
-        //Used for movement events.
         parent.addDependentRelationship(this);
         child.addDependentRelationship(this);
 
         path = new Line();
         path.setStrokeWidth(2);
+        getChildren().addAll(path);
 
         rzArrowHead = new Rotate();
         rzArrowHead.setAxis(Rotate.Z_AXIS);
 
-        findClosestAnchorPair();
-
-        getChildren().addAll(path);
-
-        //Anchor Events are fired whenever this relationship's
-        //parent or child moves. This ensures the relationship properly
-        //maintains the link between them.
-        EventHandler<AnchorEvent> maintainLink = new EventHandler<AnchorEvent>() {
-            @Override
-            public void handle(AnchorEvent event) {
-                findClosestAnchorPair();
-                updateShapeTransform();
-                event.consume();
-            }
-        };
-
-        setEventHandler(AnchorEvent.MOVED, maintainLink);
+        setEventHandler(AnchorEvent.MOVED, this::handleMove);
         findClosestAnchorPair();
     }
 
-    //Generates all possible pairings of anchor points between
-    //the child and the parent UMLClassBox.
-    //Saves the pair with the shortest distance between them.
-    //Sets this pair as the new endpoints for the line.
+    /**
+     * Anchor Events are fired whenever this relationship's
+     * parent or child moves. This ensures the relationship properly
+     * maintains the link between them.
+     * @param anchorEvent
+     */
+    private void handleMove(AnchorEvent anchorEvent)
+    {
+        findClosestAnchorPair();
+        updateShapeTransform();
+        anchorEvent.consume();
+    }
+
+    /**
+     * Generates all possible pairings of anchor points between
+     * the child and the parent UMLClassBox.
+     * Saves the pair with the shortest distance between them.
+     * Sets this pair as the new endpoints for the line.
+     */
     private void findClosestAnchorPair(){
         double shortestDistance = Double.MAX_VALUE;
         Point2D parentAnchorPoint = null;
@@ -87,8 +98,10 @@ public class Relationship extends Group {
         path.setEndY(childAnchorPoint.getY());
     }
 
-    //Ensures that the arrowhead for this relationship
-    //is in the correct location and properly rotated.
+    /**
+     * Ensures that the arrowhead for this relationship
+     * is in the correct location and properly rotated.
+     */
     public void updateShapeTransform(){
         shape.setTranslateX(path.getEndX());
         shape.setTranslateY(path.getEndY());
@@ -99,7 +112,10 @@ public class Relationship extends Group {
         rzArrowHead.setAngle(arrowRotationOffset - angle);
     }
 
-    //Toggles dashed line setting.
+    /**
+     * Toggles dashed line setting.
+     * @param state
+     */
     public void setDashedLine(boolean state){
         if (state) {
             path.getStrokeDashArray().setAll(10.0, 10.0);
@@ -110,7 +126,7 @@ public class Relationship extends Group {
     }
 
     //Possible arrowhead options:
-    //************************
+    //*******************************************
 
     public void setEmptyArrowShape(){
         double[] arrowShape = new double[] { 0,0,10,20,-10,20 };
