@@ -1,5 +1,6 @@
 package com.canisdev;
 
+import javafx.application.Platform;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -18,9 +19,15 @@ public class EditorMenu extends MenuBar {
     public EditorMenu (){
 
         super();
+
+
         styleOptions = new ArrayList<>();
         styleOptions.add(style1url);
         styleOptions.add(style2url);
+
+        Platform.runLater(()->{
+           useStyle(0);
+        });
 
         Image newFileIcon = new Image(getClass().getResourceAsStream("img/newfileicon.png"));
         ImageView newFileView = new ImageView(newFileIcon);

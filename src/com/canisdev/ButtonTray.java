@@ -36,9 +36,9 @@ public class ButtonTray extends HBox {
         ImageView selectionIcon = new ImageView(new Image(getClass().getResourceAsStream("img/selection.png")));
 
 
-        Button btn = new Button();
-        btn.setGraphic(boxIcon);
-        btn.setTooltip(new Tooltip("Create a new Class Box"));
+        Button newBoxBtn = new Button();
+        newBoxBtn.setGraphic(boxIcon);
+        newBoxBtn.setTooltip(new Tooltip("Create a new Class Box"));
 
         Button associationBtn = new Button();
         associationBtn.setGraphic(associationIcon);
@@ -68,7 +68,7 @@ public class ButtonTray extends HBox {
         selectionBtn.setGraphic(selectionIcon);
         selectionBtn.setTooltip(new Tooltip("Select Region"));
 
-        getChildren().addAll(btn, associationBtn, inheritanceBtn, implementationBtn, dependencyBtn, aggregationBtn, compositionBtn, selectionBtn);
+        getChildren().addAll(newBoxBtn, associationBtn, inheritanceBtn, implementationBtn, dependencyBtn, aggregationBtn, compositionBtn, selectionBtn);
 
         for (Node n : getChildren()){
             ((Button) n).setPrefWidth(100);
@@ -77,12 +77,15 @@ public class ButtonTray extends HBox {
 
         //Set up event handlers for button clicks.
         selectionBtn.setOnAction(this::clickSelectionBtn);
-        btn.setOnAction(this::clickNewBoxBtn);
+        newBoxBtn.setOnAction(this::clickNewBoxBtn);
+        newBoxBtn.setId("newBoxBtn");
+
         associationBtn.setOnAction(this::clickAssociationBtn);
         inheritanceBtn.setOnAction(this::clickInheritanceBtn);
         implementationBtn.setOnAction(this::clickImplementationBtn);
         dependencyBtn.setOnAction(this::clickDependencyBtn);
         aggregationBtn.setOnAction(this::clickAggregationBtn);
+        aggregationBtn.setId("aggregationBtn");
         compositionBtn.setOnAction(this::clickCompositionBtn);
     }
 

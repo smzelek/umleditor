@@ -21,6 +21,15 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/testfx-junit-4.0.6-alpha.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/guava-21.0.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -30,16 +39,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/testfx-core-4.0.0-20150226.214553-8.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/testfx-junit-4.0.6-alpha.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/testfx-core-4.0.6-alpha.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

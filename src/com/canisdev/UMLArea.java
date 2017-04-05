@@ -47,6 +47,7 @@ public class UMLArea extends Pane {
 
         boxes = new ArrayList<>();
         relationships = new ArrayList<>();
+        setId("umlArea");
 
         setOnKeyReleased((keyEvent) -> {
             //delete any nodes that are selected
