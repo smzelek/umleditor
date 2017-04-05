@@ -17,6 +17,17 @@ import javafx.scene.layout.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Instances of UMLClassBox represent a class within a virtual
+ * UML diagram. These classes may have a name, attributes, and
+ * methods.
+ *
+ * A UMLClassBox may also have relationships to other classes.
+ * @see Relationship
+ *
+ * The UMLArea holds and manipulates a collection of UMLClassBoxes.
+ * @see UMLArea
+ */
 public class UMLClassBox extends StackPane {
 
     private VBox contents;
@@ -40,8 +51,8 @@ public class UMLClassBox extends StackPane {
      * Sets up GUI sub-elements, and binds mouse and key handlers for each.
      * UMLClassBoxes start out selected.
      *
-     * @param width - width of the UMLClassBox
-     * @param height - height of the UMLClassBox
+     * @param width width of the UMLClassBox
+     * @param height height of the UMLClassBox
      */
     public UMLClassBox(double width, double height){
         super();
@@ -150,8 +161,10 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
+     * Handles mouse drag events on a UMLClassBox's frame by
+     * translating the UMLClassBox within the UMLArea.
      *
-     * @param mouseEvent
+     * @param mouseEvent A MouseEvent fired by the user's mouse actions.
      */
     private void dragBox (MouseEvent mouseEvent)
     {
@@ -167,8 +180,10 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
+     * Handles mouse exit events for a UMLClassBox by resetting
+     * the mouse cursor to Cursor.DEFAULT.
      *
-     * @param mouseEvent
+     * @param mouseEvent A MouseEvent fired by the user's mouse actions.
      */
     private void resetMouseCursor (MouseEvent mouseEvent)
     {
@@ -177,8 +192,11 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
+     * Handles mouse move events by changing the mouse cursor
+     * to Cursor.MOVE, indicating that clicking and dragging will
+     * allow the user to translate the UMLClassBox.
      *
-     * @param mouseEvent
+     * @param mouseEvent A MouseEvent fired by the user's mouse actions.
      */
     private void setMouseoverCursor (MouseEvent mouseEvent)
     {
@@ -187,8 +205,11 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
+     * Handles mouse press events by selecting the UMLClassBox.
+     * The UMLClassBox will be decorated to indicate selection.
+     * Also moves the UMLClassBox to the front of the draw order.
      *
-     * @param mouseEvent
+     * @param mouseEvent A MouseEvent fired by the user's mouse actions.
      */
     private void selectBox (MouseEvent mouseEvent)
     {
@@ -202,8 +223,12 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
+     * Handles key events on the three text fields of a
+     * UMLClassBox. Specifically, currently responds to TAB
+     * and SHIFT-TAB by focusing the preceding or succeeding
+     * text field.
      *
-     * @param keyEvent
+     * @param keyEvent A KeyEvent fired by the user's keyboard actions.
      */
     private void cycleTextFields(KeyEvent keyEvent)
     {
@@ -239,8 +264,13 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
+     * Handles click events for the three text fields of a
+     * UMLClassBox. Clears the selection in the UMLArea.
+     * Currently, performs a hack to ensure that the cursor
+     * correctly appears when a text field is selected.
+     * Note: This appears to possibly be an internal JavaFX issue.
      *
-     * @param mouseEvent
+     * @param mouseEvent A MouseEvent fired by the user's mouse actions.
      */
     private void clickTextField (MouseEvent mouseEvent){
         toFront();
@@ -257,9 +287,17 @@ public class UMLClassBox extends StackPane {
         }
         mouseEvent.consume();
     }
+
     /**
-     * Fetches an array of possible linking points for a relationship.
-     * @return
+     * Creates an array from the anchor points on a given
+     * UMLClassBox instance. These consist of the top middle,
+     * left middle, right middle, and bottom middle points
+     * on the UMLClassBox. These are used by relationships
+     * to determine where their endpoints may be located.
+     *
+     * @see Relationship
+     * @return The points that relationships may link
+     * to on this box, in scene coordinates.
      */
     public ArrayList<Point2D> getAnchorPoints() {
         return new ArrayList<>(Arrays.asList(getTopAnchorPoint(),
@@ -272,8 +310,10 @@ public class UMLClassBox extends StackPane {
     //*******************************************************************
 
     /**
+     * Convenience method to access the left center point on
+     * the edge of a UMLClassBox.
      *
-     * @return
+     * @return The left center point in local coordinates.
      */
     public Point2D getLeftAnchorPoint () {
         double xpos = getTranslateX() + RESIZE_MARGIN;
@@ -282,8 +322,10 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
+     * Convenience method to access the right center point on
+     * the edge of a UMLClassBox.
      *
-     * @return
+     * @return The right center point in local coordinates.
      */
     public Point2D getRightAnchorPoint () {
         double xpos = getTranslateX() + getWidth() - RESIZE_MARGIN + SIDE_MARGIN/2;
@@ -292,8 +334,10 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
+     * Convenience method to access the bottom center point on
+     * the edge of a UMLClassBox.
      *
-     * @return
+     * @return The bottom center point in local coordinates.
      */
     public Point2D getBottomAnchorPoint () {
         double xpos = getTranslateX() + getWidth()/2;
@@ -302,8 +346,10 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
+     * Convenience method to access the top center point on
+     * the edge of a UMLClassBox.
      *
-     * @return
+     * @return The top center point in local coordinates.
      */
     public Point2D getTopAnchorPoint () {
         double xpos = getTranslateX() + getWidth()/2;
@@ -312,9 +358,11 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
-     * Convenience method to move scene object by a given offset vector.
-     * @param offsetX
-     * @param offsetY
+     * Convenience method to move scene object by a given 2D
+     * offset vector.
+     *
+     * @param offsetX Translation delta in X
+     * @param offsetY Translation delta in Y
      */
     public void translate(double offsetX, double offsetY){
         setTranslateX(getTranslateX() + offsetX);
@@ -324,7 +372,8 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
-     * Lets dependent relationships know that they must adjust
+     * Fires an event to all dependent relationships that
+     * this UMLClassBox has moved, so they must adjust
      * their endpoints, size, and rotation.
      */
     public void sendMoveEvent(){
@@ -334,21 +383,24 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
-     * Keep track of attached relationship objects by adding
-     * them to the list of ones attached to this list.
+     * Adds the supplied Relationship onto the list of
+     * Relationships that are attached to this UMLClassBox.
+     * Keeping track of them allows the UMLClassBox to
+     * send events to the Relationship.
      *
-     * @param r
+     * @param r A Relationship that depends on this UMLClassBox
      */
     public void addDependentRelationship(Relationship r){
         dependents.add(r);
     }
 
     /**
-     * Change appearance to indicate selection, which
-     * allows resizing and deleting. Resize nodes appear
-     * upon selection.
+     * Decorates a UMLClassBox to indicate selection,
+     * which allows for deletion. Selection also reveals
+     * ResizeNodes along the border which allow the
+     * UMLClassBox to be dynamically resized.
      *
-     * @param state - set selected to true or false
+     * @param state set selected to true or false
      */
     public void setSelected (boolean state) {
         isSelected = state;
