@@ -11,7 +11,9 @@ import javafx.stage.WindowEvent;
 import java.util.ArrayList;
 
 /**
- *
+ * A menu that spans the top of the application, allowing
+ * manipulation of general settings.
+ * TODO
  */
 public class EditorMenu extends MenuBar {
 
@@ -19,6 +21,9 @@ public class EditorMenu extends MenuBar {
     private String style2url = Main.class.getResource("Style2.css").toExternalForm();
     private ArrayList<String> styleOptions;
 
+    /**
+     * Creates an EditorMenu.
+     */
     public EditorMenu (){
         super();
 
@@ -26,9 +31,8 @@ public class EditorMenu extends MenuBar {
         styleOptions.add(style1url);
         styleOptions.add(style2url);
 
-        Platform.runLater(()->{
-           useStyle(0);
-        });
+        Platform.runLater(()-> useStyle(0));
+
 
         //Icons to be used for some menu items.
         Image newFileIcon = new Image(getClass().getResourceAsStream("img/newfileicon.png"));
@@ -77,13 +81,11 @@ public class EditorMenu extends MenuBar {
         //*************************************************
 
 
-
         // EDIT MENU
         //*************************************************
         Menu menuEdit = new Menu("Edit");
         // END OF EDIT MENU
         //*************************************************
-
 
 
         //*************************************************
@@ -113,7 +115,8 @@ public class EditorMenu extends MenuBar {
      * Changes the custom CSS used to style FXML elements of
      * the application by indicating which loaded stylesheet
      * should be used.
-     * @param styleNumber - index of the stylesheet to swap to
+     *
+     * @param styleNumber Index of the saved stylesheet to use.
      */
     public void useStyle (int styleNumber){
         getScene().getStylesheets().clear();

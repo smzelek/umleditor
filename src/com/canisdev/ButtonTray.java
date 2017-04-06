@@ -11,14 +11,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Tooltip;
 
+/**
+ * TODO
+ */
 public class ButtonTray extends HBox {
 
     private UMLArea umlArea;
 
+    /**
+     * Creates a ButtonTray, and maintains a reference to the
+     * UMLArea in order to modify it.
+     *
+     * @param umlArea The UMLArea
+     */
     public ButtonTray (UMLArea umlArea) {
         super();
-        //setPrefWidth(Double.MAX_VALUE);
-        setStyle("-fx-background-color:#A0A0A0;-fx-border-color:black; -fx-border-width:1 0 0 0; -fx-border-style:solid;");
+        setId("button-tray");
         setAlignment(Pos.CENTER);
         setPadding(new Insets(10, 5, 10, 5));
         setSpacing(5);
@@ -68,18 +76,9 @@ public class ButtonTray extends HBox {
         selectionBtn.setGraphic(selectionIcon);
         selectionBtn.setTooltip(new Tooltip("Select Region"));
 
-        getChildren().addAll(newBoxBtn, associationBtn, inheritanceBtn, implementationBtn, dependencyBtn, aggregationBtn, compositionBtn, selectionBtn);
-
-        for (Node n : getChildren()){
-            ((Button) n).setPrefWidth(100);
-            ((Button) n).setPrefHeight(40);
-        }
-
         //Set up event handlers for button clicks.
-        selectionBtn.setOnAction(this::clickSelectionBtn);
         newBoxBtn.setOnAction(this::clickNewBoxBtn);
         newBoxBtn.setId("newBoxBtn");
-
         associationBtn.setOnAction(this::clickAssociationBtn);
         inheritanceBtn.setOnAction(this::clickInheritanceBtn);
         implementationBtn.setOnAction(this::clickImplementationBtn);
@@ -87,44 +86,105 @@ public class ButtonTray extends HBox {
         aggregationBtn.setOnAction(this::clickAggregationBtn);
         aggregationBtn.setId("aggregationBtn");
         compositionBtn.setOnAction(this::clickCompositionBtn);
+        selectionBtn.setOnAction(this::clickSelectionBtn);
+
+        getChildren().addAll(newBoxBtn, associationBtn, inheritanceBtn, implementationBtn, dependencyBtn, aggregationBtn, compositionBtn, selectionBtn);
+
+        for (Node n : getChildren()){
+            ((Button) n).setPrefWidth(100);
+            ((Button) n).setPrefHeight(40);
+        }
     }
 
-    public void clickSelectionBtn (ActionEvent actionEvent) {
-        umlArea.setSelectionMode();
-    }
-
+    /**
+     * Allows the user to change the UMLArea mode in order to
+     * create a new UMLClassBox on click events.
+     *
+     * @param actionEvent An interaction event fired by the user.
+     */
     public void clickNewBoxBtn (ActionEvent actionEvent) {
         umlArea.setNewBoxMode();
         getScene().setCursor(Cursor.CROSSHAIR);
     }
 
-    public void clickAssociationBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(0);
-        getScene().setCursor(Cursor.CROSSHAIR);
-    }
-
-    public void clickInheritanceBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(1);
-        getScene().setCursor(Cursor.CROSSHAIR);
-    }
-
-    public void clickCompositionBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(5);
-        getScene().setCursor(Cursor.CROSSHAIR);
-    }
-
+    /**
+     * Allows the user to change the UMLArea mode to allow
+     * creating a new Aggregation Relationship by selecting
+     * two UMLClassBoxes.
+     *
+     * @param actionEvent An interaction event fired by the user.
+     */
     public void clickAggregationBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(4);
+        umlArea.setNewLineMode(Relationship.RelationshipType.Aggregation);
         getScene().setCursor(Cursor.CROSSHAIR);
     }
 
+    /**
+     * Allows the user to change the UMLArea mode to allow
+     * creating a new Association Relationship by selecting
+     * two UMLClassBoxes.
+     *
+     * @param actionEvent An interaction event fired by the user.
+     */
+    public void clickAssociationBtn (ActionEvent actionEvent) {
+        umlArea.setNewLineMode(Relationship.RelationshipType.Association);
+        getScene().setCursor(Cursor.CROSSHAIR);
+    }
+
+    /**
+     * Allows the user to change the UMLArea mode to allow
+     * creating a new Composition Relationship by selecting
+     * two UMLClassBoxes.
+     *
+     * @param actionEvent An interaction event fired by the user.
+     */
+    public void clickCompositionBtn (ActionEvent actionEvent) {
+        umlArea.setNewLineMode(Relationship.RelationshipType.Composition);
+        getScene().setCursor(Cursor.CROSSHAIR);
+    }
+
+    /**
+     * Allows the user to change the UMLArea mode to allow
+     * creating a new Dependency Relationship by selecting
+     * two UMLClassBoxes.
+     *
+     * @param actionEvent An interaction event fired by the user.
+     */
     public void clickDependencyBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(3);
+        umlArea.setNewLineMode(Relationship.RelationshipType.Dependency);
         getScene().setCursor(Cursor.CROSSHAIR);
     }
 
+    /**
+     * Allows the user to change the UMLArea mode to allow
+     * creating a new Implementation Relationship by selecting
+     * two UMLClassBoxes.
+     *
+     * @param actionEvent An interaction event fired by the user.
+     */
     public void clickImplementationBtn (ActionEvent actionEvent) {
-        umlArea.setNewLineMode(2);
+        umlArea.setNewLineMode(Relationship.RelationshipType.Implementation);
         getScene().setCursor(Cursor.CROSSHAIR);
+    }
+
+    /**
+     * Allows the user to change the UMLArea mode to allow
+     * creating a new Inheritance Relationship by selecting
+     * two UMLClassBoxes.
+     *
+     * @param actionEvent An interaction event fired by the user.
+     */
+    public void clickInheritanceBtn (ActionEvent actionEvent) {
+        umlArea.setNewLineMode(Relationship.RelationshipType.Inheritance);
+        getScene().setCursor(Cursor.CROSSHAIR);
+    }
+
+    /**
+     * Allows the user to change the UMLArea into selection mode.
+     *
+     * @param actionEvent An interaction event fired by the user.
+     */
+    public void clickSelectionBtn (ActionEvent actionEvent) {
+        umlArea.setSelectionMode();
     }
 }

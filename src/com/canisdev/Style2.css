@@ -1,6 +1,13 @@
 .text-field {
 }
 
+#button-tray {
+  -fx-background-color: #A0A0A0;
+  -fx-border-color: black;
+  -fx-border-width: 1 0 0 0;
+  -fx-border-style: solid;
+}
+
 #resize-circle {
   -fx-fill:white;
   -fx-stroke:gray;

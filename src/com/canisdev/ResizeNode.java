@@ -9,17 +9,15 @@ import javafx.scene.shape.Circle;
  * This scene object appears as a circle and
  * uses custom mouse event handlers to implement resizing
  * its parent UMLClassBox.
+ * TODO
  */
 public class ResizeNode extends Circle {
 
-    public static final int TOP_LEFT = 0;
-    public static final int TOP_CENTER = 1;
-    public static final int TOP_RIGHT = 2;
-    public static final int CENTER_RIGHT = 3;
-    public static final int BOTTOM_RIGHT = 4;
-    public static final int BOTTOM_CENTER = 5;
-    public static final int BOTTOM_LEFT = 6;
-    public static final int CENTER_LEFT = 7;
+    enum ResizeType
+    {
+        TOP_LEFT, TOP_CENTER, TOP_RIGHT, CENTER_RIGHT,
+        BOTTOM_RIGHT, BOTTOM_CENTER, BOTTOM_LEFT, CENTER_LEFT
+    }
 
     private static double RADIUS = 0;
 
@@ -27,40 +25,45 @@ public class ResizeNode extends Circle {
     private double lastMousePosY;
     private double offsetX;
     private double offsetY;
-    private final int resizeType;
+    private final ResizeType resizeType;
 
     private double parentRightMarginPos;
     private double parentBottomMarginPos;
 
     /**
+     * Creates a ResizeNode object with a given ResizeType, which is
+     * analogous to the location it occupies.
      *
-     * @param resizeType
-     * @param parent
+     * @param resizeType Which position the ResizeNode occupies.
      */
-    public ResizeNode (int resizeType, UMLClassBox parent){
+    public ResizeNode (ResizeType resizeType){
         super(RADIUS);
 
-        assert (resizeType >= 0 && resizeType <= 7);
         this.resizeType = resizeType;
+
         setId("resize-circle");
-        setOnMouseMoved(this::setMouseoverCursor);
-        setOnMousePressed(this::handleMouseDown);
-        setOnMouseDragged(this::handleMouseDrag);
+        setOnMouseMoved(this::handleMouseMoved);
+        setOnMousePressed(this::handleMousePressed);
+        setOnMouseDragged(this::handleMouseDragged);
     }
 
     /**
-     * Defines draw size of the circles.
-     * @param newRadius
+     * Sets the static draw size for all ResizeNodes. This method
+     * should be called before any ResizeNodes are constructed.
+     *
+     * @param newRadius A radius to use for all ResizeNodes.
      */
     public static void setNodeRadius (double newRadius) {
         RADIUS = newRadius;
     }
 
     /**
-     * Sets the custom cursor for this resize type.
-     * @param mouseEvent
+     * Handles mouse over events for a ResizeNode by setting the
+     * cursor based on its resizeType.
+     *
+     * @param mouseEvent A mouse moved event fired by the user.
      */
-    private void setMouseoverCursor (MouseEvent mouseEvent)
+    private void handleMouseMoved (MouseEvent mouseEvent)
     {
         mouseEvent.consume();
         switch (resizeType){
@@ -108,11 +111,12 @@ public class ResizeNode extends Circle {
     }
 
     /**
-     * Resize and translate the parent UMLClassBox based on
-     * which node is clicked.
-     * @param mouseEvent
+     * Handles mouse drag events for a ResizeNode by resizing
+     * and translating the UMLClassBox based on ResizeType.
+     *
+     * @param mouseEvent A mouse drag event fired by the user.
      */
-    private void handleMouseDrag (MouseEvent mouseEvent)
+    private void handleMouseDragged (MouseEvent mouseEvent)
     {
         UMLClassBox parent = (UMLClassBox) getParent();
         mouseEvent.consume();
@@ -171,11 +175,12 @@ public class ResizeNode extends Circle {
     }
 
     /**
-     * Mouse pressed handler performs setup to handle resizing
-     * that will occur when dragging begins.
-     * @param mouseEvent
+     * Handles mouse press events for a ResizeNode by performing
+     * the setup to allow resizing during mouse drag events.
+     *
+     * @param mouseEvent A mouse press event fired by the user.
      */
-    private void handleMouseDown (MouseEvent mouseEvent)
+    private void handleMousePressed (MouseEvent mouseEvent)
     {
         mouseEvent.consume();
 
@@ -197,7 +202,11 @@ public class ResizeNode extends Circle {
     }
 
     /**
-     * Increases vertical box height and translates upward at an equal rate.
+     * Modifies the parent UMLClassBox of this ResizeNode by
+     * increasing the parent's height. Also translates the
+     * parent UMLClassBox upward at an equal rate to height
+     * increases, so that only the top margin of the UMLClassBox
+     * appears to move.
      */
     private void resizeTop(){
         UMLClassBox parent = (UMLClassBox) getParent();
@@ -211,7 +220,8 @@ public class ResizeNode extends Circle {
     }
 
     /**
-     * Increase horizontal box width; no translate.
+     * Modifies the parent UMLClassBox of this ResizeNode by
+     * increasing the parent's width.
      */
     private void resizeRight(){
         UMLClassBox parent = (UMLClassBox) getParent();
@@ -219,7 +229,8 @@ public class ResizeNode extends Circle {
     }
 
     /**
-     * Increase vertical box height; no translate;
+     * Modifies the parent UMLClassBox of this ResizeNode by
+     * increasing the parent's height.
      */
     private void resizeBottom(){
         UMLClassBox parent = (UMLClassBox) getParent();
@@ -227,7 +238,11 @@ public class ResizeNode extends Circle {
     }
 
     /**
-     * Increase horizontal box width and translate left.
+     * Modifies the parent UMLClassBox of this ResizeNode by
+     * increasing the parent's width. Also translates the
+     * parent UMLClassBox left at an equal rate to width
+     * increases, so that only the left margin of the UMLClassBox
+     * appears to move.
      */
     private void resizeLeft(){
         UMLClassBox parent = (UMLClassBox) getParent();

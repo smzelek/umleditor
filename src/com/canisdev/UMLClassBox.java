@@ -6,7 +6,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -23,9 +22,10 @@ import java.util.Arrays;
  * methods.
  *
  * A UMLClassBox may also have relationships to other classes.
- * @see Relationship
- *
  * The UMLArea holds and manipulates a collection of UMLClassBoxes.
+ * TODO
+ *
+ * @see Relationship
  * @see UMLArea
  */
 public class UMLClassBox extends StackPane {
@@ -44,17 +44,14 @@ public class UMLClassBox extends StackPane {
     private ArrayList<Relationship> dependents;
 
     /**
-     * Constructor for the UMLClassBox object. Creates a new UMLClassBox
-     * based on size parameters. Margins are <em>added</em> to these dimensions,
-     * not subtracted from them.
-     * <p>
-     * Sets up GUI sub-elements, and binds mouse and key handlers for each.
+     * Creates a UMLClassBox based on size parameters. Margins are
+     * <em>added</em> to these dimensions, not subtracted from them.
      * UMLClassBoxes start out selected.
      *
-     * @param width width of the UMLClassBox
-     * @param height height of the UMLClassBox
+     * @param width Width of the UMLClassBox.
+     * @param height Height of the UMLClassBox.
      */
-    public UMLClassBox(double width, double height){
+    public UMLClassBox(double width, double height) {
         super();
 
         width = Math.floor(width);
@@ -74,8 +71,8 @@ public class UMLClassBox extends StackPane {
         nameArea.setMaxWidth(Double.MAX_VALUE);
 
         //Handlers for nameArea element
-        nameArea.setOnKeyPressed(this::cycleTextFields);
-        nameArea.setOnMouseClicked(this::clickTextField);
+        nameArea.setOnKeyPressed(this::handleTextFieldsKeyPressed);
+        nameArea.setOnMouseClicked(this::handleTextFieldsMouseClicked);
 
         //Layout for attributeArea element
         attributeArea = new TextArea();
@@ -85,8 +82,8 @@ public class UMLClassBox extends StackPane {
         attributeArea.setMaxWidth(Double.MAX_VALUE);
 
         //Handlers for attributeArea element
-        attributeArea.setOnKeyPressed(this::cycleTextFields);
-        attributeArea.setOnMouseClicked(this::clickTextField);
+        attributeArea.setOnKeyPressed(this::handleTextFieldsKeyPressed);
+        attributeArea.setOnMouseClicked(this::handleTextFieldsMouseClicked);
 
         //Layout for methodArea element
         methodArea = new TextArea();
@@ -96,8 +93,8 @@ public class UMLClassBox extends StackPane {
         methodArea.setMaxWidth(Double.MAX_VALUE);
 
         //Handlers for methodArea element
-        methodArea.setOnKeyPressed(this::cycleTextFields);
-        methodArea.setOnMouseClicked(this::clickTextField);
+        methodArea.setOnKeyPressed(this::handleTextFieldsKeyPressed);
+        methodArea.setOnMouseClicked(this::handleTextFieldsMouseClicked);
 
         //Layout for contents parent
         contents = new VBox();
@@ -113,31 +110,31 @@ public class UMLClassBox extends StackPane {
         contents.setMaxHeight(Double.MAX_VALUE);
 
         //Handlers for contents parent
-        contents.setOnMouseMoved(this::setMouseoverCursor);
-        contents.setOnMousePressed(this::selectBox);
-        contents.setOnMouseDragged(this::dragBox);
-        contents.setOnMouseReleased(this::resetMouseCursor);
-        contents.setOnMouseExited(this::resetMouseCursor);
+        contents.setOnMouseMoved(this::handleMouseMoved);
+        contents.setOnMousePressed(this::handleMousePressed);
+        contents.setOnMouseDragged(this::handleMouseDragged);
+        contents.setOnMouseReleased(this::handleMouseExited);
+        contents.setOnMouseExited(this::handleMouseExited);
 
         //Set radius for all following Resize Nodes.
         ResizeNode.setNodeRadius(RESIZE_MARGIN);
 
         //Add 8 resize nodes to decorate frame of UML Class Box.
-        topLeft = new ResizeNode(ResizeNode.TOP_LEFT, this);
+        topLeft = new ResizeNode(ResizeNode.ResizeType.TOP_LEFT);
         setAlignment(topLeft, Pos.TOP_LEFT);
-        top = new ResizeNode(ResizeNode.TOP_CENTER, this);
+        top = new ResizeNode(ResizeNode.ResizeType.TOP_CENTER);
         setAlignment(top, Pos.TOP_CENTER);
-        topRight = new ResizeNode(ResizeNode.TOP_RIGHT, this);
+        topRight = new ResizeNode(ResizeNode.ResizeType.TOP_RIGHT);
         setAlignment(topRight, Pos.TOP_RIGHT);
-        right = new ResizeNode(ResizeNode.CENTER_RIGHT, this);
+        right = new ResizeNode(ResizeNode.ResizeType.CENTER_RIGHT);
         setAlignment(right, Pos.CENTER_RIGHT);
-        bottomRight = new ResizeNode(ResizeNode.BOTTOM_RIGHT, this);
+        bottomRight = new ResizeNode(ResizeNode.ResizeType.BOTTOM_RIGHT);
         setAlignment(bottomRight, Pos.BOTTOM_RIGHT);
-        bottom = new ResizeNode(ResizeNode.BOTTOM_CENTER, this);
+        bottom = new ResizeNode(ResizeNode.ResizeType.BOTTOM_CENTER);
         setAlignment(bottom, Pos.BOTTOM_CENTER);
-        bottomLeft = new ResizeNode(ResizeNode.BOTTOM_LEFT, this);
+        bottomLeft = new ResizeNode(ResizeNode.ResizeType.BOTTOM_LEFT);
         setAlignment(bottomLeft, Pos.BOTTOM_LEFT);
-        left = new ResizeNode(ResizeNode.CENTER_LEFT, this);
+        left = new ResizeNode(ResizeNode.ResizeType.CENTER_LEFT);
         setAlignment(left, Pos.CENTER_LEFT);
 
         //Layout for UMLClassBox object.
@@ -150,11 +147,11 @@ public class UMLClassBox extends StackPane {
         setMinSize(width, height);
 
         //Handlers for UMLClassBox object.
-        setOnMouseMoved(this::setMouseoverCursor);
-        setOnMousePressed(this::selectBox);
-        setOnMouseDragged(this::dragBox);
-        setOnMouseReleased(this::resetMouseCursor);
-        setOnMouseExited(this::resetMouseCursor);
+        setOnMouseMoved(this::handleMouseMoved);
+        setOnMousePressed(this::handleMousePressed);
+        setOnMouseDragged(this::handleMouseDragged);
+        setOnMouseReleased(this::handleMouseExited);
+        setOnMouseExited(this::handleMouseExited);
 
         //Boxes start out selected.
         setSelected(true);
@@ -164,9 +161,9 @@ public class UMLClassBox extends StackPane {
      * Handles mouse drag events on a UMLClassBox's frame by
      * translating the UMLClassBox within the UMLArea.
      *
-     * @param mouseEvent A MouseEvent fired by the user's mouse actions.
+     * @param mouseEvent A mouse drag event fired by the user.
      */
-    private void dragBox (MouseEvent mouseEvent)
+    private void handleMouseDragged (MouseEvent mouseEvent)
     {
         double offsetX = mouseEvent.getSceneX() - lastMousePosX;
         double offsetY = mouseEvent.getSceneY() - lastMousePosY;
@@ -183,9 +180,9 @@ public class UMLClassBox extends StackPane {
      * Handles mouse exit events for a UMLClassBox by resetting
      * the mouse cursor to Cursor.DEFAULT.
      *
-     * @param mouseEvent A MouseEvent fired by the user's mouse actions.
+     * @param mouseEvent A mouse exit event fired by the user.
      */
-    private void resetMouseCursor (MouseEvent mouseEvent)
+    private void handleMouseExited (MouseEvent mouseEvent)
     {
         getScene().setCursor(Cursor.DEFAULT);
         mouseEvent.consume();
@@ -196,9 +193,9 @@ public class UMLClassBox extends StackPane {
      * to Cursor.MOVE, indicating that clicking and dragging will
      * allow the user to translate the UMLClassBox.
      *
-     * @param mouseEvent A MouseEvent fired by the user's mouse actions.
+     * @param mouseEvent A mouse move event fired by the user.
      */
-    private void setMouseoverCursor (MouseEvent mouseEvent)
+    private void handleMouseMoved (MouseEvent mouseEvent)
     {
         getScene().setCursor(Cursor.MOVE);
         mouseEvent.consume();
@@ -209,9 +206,9 @@ public class UMLClassBox extends StackPane {
      * The UMLClassBox will be decorated to indicate selection.
      * Also moves the UMLClassBox to the front of the draw order.
      *
-     * @param mouseEvent A MouseEvent fired by the user's mouse actions.
+     * @param mouseEvent A mouse press event fired by the user.
      */
-    private void selectBox (MouseEvent mouseEvent)
+    private void handleMousePressed (MouseEvent mouseEvent)
     {
         lastMousePosX = mouseEvent.getSceneX();
         lastMousePosY = mouseEvent.getSceneY();
@@ -223,14 +220,14 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
-     * Handles key events on the three text fields of a
+     * Handles key press events on the three text fields of a
      * UMLClassBox. Specifically, currently responds to TAB
      * and SHIFT-TAB by focusing the preceding or succeeding
      * text field.
      *
-     * @param keyEvent A KeyEvent fired by the user's keyboard actions.
+     * @param keyEvent A key press event fired by the user.
      */
-    private void cycleTextFields(KeyEvent keyEvent)
+    private void handleTextFieldsKeyPressed (KeyEvent keyEvent)
     {
         if (keyEvent.getCode() == KeyCode.TAB) {
             if (keyEvent.isShiftDown()) {
@@ -264,15 +261,15 @@ public class UMLClassBox extends StackPane {
     }
 
     /**
-     * Handles click events for the three text fields of a
-     * UMLClassBox. Clears the selection in the UMLArea.
+     * Handles mouse click events for the three text fields of
+     * a UMLClassBox. Clears the selection in the UMLArea.
      * Currently, performs a hack to ensure that the cursor
      * correctly appears when a text field is selected.
      * Note: This appears to possibly be an internal JavaFX issue.
      *
-     * @param mouseEvent A MouseEvent fired by the user's mouse actions.
+     * @param mouseEvent A mouse click event fired by the user.
      */
-    private void clickTextField (MouseEvent mouseEvent){
+    private void handleTextFieldsMouseClicked (MouseEvent mouseEvent){
         toFront();
         ((UMLArea) getParent()).clearSelections();
 
@@ -388,7 +385,7 @@ public class UMLClassBox extends StackPane {
      * Keeping track of them allows the UMLClassBox to
      * send events to the Relationship.
      *
-     * @param r A Relationship that depends on this UMLClassBox
+     * @param r A Relationship that depends on this UMLClassBox.
      */
     public void addDependentRelationship(Relationship r){
         dependents.add(r);
@@ -400,7 +397,7 @@ public class UMLClassBox extends StackPane {
      * ResizeNodes along the border which allow the
      * UMLClassBox to be dynamically resized.
      *
-     * @param state set selected to true or false
+     * @param state Whether or not to select the box.
      */
     public void setSelected (boolean state) {
         isSelected = state;

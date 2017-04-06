@@ -12,11 +12,15 @@ import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 
-
+/**
+ * TODO
+ */
 public class UMLArea extends Pane {
     //TODO: when making lines, send its parent/child to front of UMLArea
     //TODO: hitting escape will exit out of new box and new line mode
     //TODO: where should the relationships EXIST? in the UMLArea or only as children of nodes
+    enum Mode { None, Box, Line, Select }
+    private Mode currentMode = Mode.None;
 
     private double lastMousePosX;
     private double lastMousePosY;
@@ -27,13 +31,7 @@ public class UMLArea extends Pane {
     private double secondCornerX;
     private double secondCornerY;
 
-    enum Mode {
-        None, Box, Line, Select
-    }
-
-    private Mode currentMode = Mode.None;
-
-    private int lineType;
+    private Relationship.RelationshipType lineType;
 
     private ArrayList<UMLClassBox> boxes;
     private ArrayList<Relationship> relationships;
@@ -42,7 +40,7 @@ public class UMLArea extends Pane {
     private UMLClassBox lineParent2;
 
     /**
-     *
+     * Creates a UMLArea.
      */
     public UMLArea () {
         super();
@@ -51,18 +49,28 @@ public class UMLArea extends Pane {
         relationships = new ArrayList<>();
         setId("umlArea");
 
-        setOnKeyReleased(this::processKeys);
-        setOnMouseMoved(this::setMouseoverCursor);
-        setOnMousePressed(this::handleMouseDown);
-        setOnMouseReleased(this::handleMouseUp);
-        setOnMouseDragged(this::handleMouseDrag);
+        setOnKeyReleased(this::handleKeyReleased);
+        setOnMouseMoved(this::handleMouseMoved);
+        setOnMousePressed(this::handleMousePressed);
+        setOnMouseReleased(this::handleMouseReleased);
+        setOnMouseDragged(this::handleMouseDragged);
     }
 
     /**
+     * Handles mouse press events based on the current mode of
+     * the UMLArea.
+     * <p>
+     *    <strong>None:</strong> Performs the setup to allow translating
+     *    the viewport during mouse drag events.
+     * </p>
+     * <p>
+     *    <strong>Select:</strong> Performs the setup to allow calculation
+     *    of a selection area.
+     * </p>
      *
-     * @param mouseEvent
+     * @param mouseEvent A mouse press event fired by the user.
      */
-    private void handleMouseDown (MouseEvent mouseEvent)
+    private void handleMousePressed (MouseEvent mouseEvent)
     {
         switch (currentMode) {
             case None: {
@@ -96,10 +104,18 @@ public class UMLArea extends Pane {
 
 
     /**
+     * Handles mouse drag events based on the current mode of
+     * the UMLArea.
+     * <p>
+     *    <strong>None:</strong> Translates the viewport of the UMLArea.
+     * </p>
+     * <p>
+     *    <strong>Select:</strong> Updates the selection area.
+     * </p>
      *
-     * @param mouseEvent
+     * @param mouseEvent A mouse drag event fired by the user.
      */
-    private void handleMouseDrag (MouseEvent mouseEvent)
+    private void handleMouseDragged (MouseEvent mouseEvent)
     {
         switch (currentMode)
         {
@@ -108,9 +124,7 @@ public class UMLArea extends Pane {
                 double offsetX = mouseEvent.getSceneX() - lastMousePosX;
                 double offsetY = mouseEvent.getSceneY() - lastMousePosY;
 
-                //translate all boxes, lines will move w/ children
                 for (UMLClassBox box : boxes){
-                    //todo: let nodes do move in class method, so lines are moved too
                     box.translate(offsetX, offsetY);
                 }
                 break;
@@ -146,10 +160,7 @@ public class UMLArea extends Pane {
                     setSelectionArea(xPos, yPos, width, height);
                 }
 
-                double maxX = xPos + width;
-                double maxY = yPos + height;
-
-                selectBoxesInArea(xPos, maxX, yPos, maxY);
+                selectBoxesInArea();
                 break;
             }
         }
@@ -161,10 +172,25 @@ public class UMLArea extends Pane {
     }
 
     /**
+     * Handles mouse release events based on the current mode of
+     * the UMLArea.
+     * <p>
+     *    <strong>Box:</strong> Adds a new UMLClassBox at the mouse
+     *    location and resets the UMLArea's mode.
+     * </p>
+     * <p>
+     *    <strong>Line:</strong> Sets the source for a Relationship on
+     *    first click. Sets the destination for a Relationship on second
+     *    click, and constructs the Relationship.
+     * </p>
+     * <p>
+     *    <strong>Select:</strong> Removes the selection area, but leaves
+     *    the UMLClassBoxes selected.
+     * </p>
      *
-     * @param mouseEvent
+     * @param mouseEvent A mouse release event fired by the user.
      */
-    private void handleMouseUp (MouseEvent mouseEvent)
+    private void handleMouseReleased (MouseEvent mouseEvent)
     {
         switch (currentMode)
         {
@@ -212,10 +238,12 @@ public class UMLArea extends Pane {
 
 
     /**
+     * Handles mouse move events based on the current mode of
+     * the UMLArea. Properly sets the mouse Cursor for each mode.
      *
-     * @param mouseEvent
+     * @param mouseEvent A mouse move event fired by the user.
      */
-    private void setMouseoverCursor (MouseEvent mouseEvent)
+    private void handleMouseMoved (MouseEvent mouseEvent)
     {
         switch (currentMode)
         {
@@ -244,17 +272,20 @@ public class UMLArea extends Pane {
     }
 
     /**
+     * Handles key press events while the UMLArea is focused
+     * for DELETE and BACK_SPACE by deleting any UMLClassBoxes
+     * that are currently selected. Also deletes Relationships
+     * that depend on these UMLClassBoxes.
      *
-     * @param keyEvent
+     * @param keyEvent A key press event fired by the user.
      */
-    private void processKeys (KeyEvent keyEvent) {
-        //delete any nodes that are selected
+    private void handleKeyReleased (KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.DELETE || keyEvent.getCode() == KeyCode.BACK_SPACE){
             ArrayList<UMLClassBox> boxCopy = new ArrayList<>(boxes);
 
             for (UMLClassBox n : boxCopy){
                 if (n.isSelected) {
-                    removeLineIfDependent(n);
+                    removeDependentRelationships(n);
                     boxes.remove(n);
                     getChildren().remove(n);
 
@@ -267,10 +298,13 @@ public class UMLArea extends Pane {
     }
 
     /**
+     * Deletes any Relationships that depend on a given
+     * UMLClassBox.
      *
-     * @param box
+     * @param box The UMLClassBox whose dependent Relationships
+     *            should be removed.
      */
-    private void removeLineIfDependent(UMLClassBox box){
+    private void removeDependentRelationships (UMLClassBox box){
 
         ArrayList<Relationship> relationshipsCopy = new ArrayList<>(relationships);
 
@@ -283,7 +317,8 @@ public class UMLArea extends Pane {
     }
 
     /**
-     *
+     * Changes the UMLArea's mode to Box, allowing the creation
+     * of new UMLClassBoxes.
      */
     public void setNewBoxMode(){
         currentMode = Mode.Box;
@@ -296,7 +331,8 @@ public class UMLArea extends Pane {
     }
 
     /**
-     *
+     * Changes the UMLArea's mode to None, allowing the translation
+     * of the viewport for the UMLArea.
      */
     public void setNoMode(){
         currentMode = Mode.None;
@@ -306,9 +342,10 @@ public class UMLArea extends Pane {
     }
 
     /**
-     *
+     * Changes the UMLArea's mode to Line, allowing the creation of
+     * new Relationships.
      */
-    public void setNewLineMode(int lineType){
+    public void setNewLineMode(Relationship.RelationshipType lineType){
         currentMode = Mode.Line;
         this.lineType = lineType;
 
@@ -323,7 +360,8 @@ public class UMLArea extends Pane {
     }
 
     /**
-     * Allows graphical button to change state to Selection mode
+     * Changes the UMLArea's mode to Select, allowing the user to
+     * select multiple UMLClassBoxes in a selection area.
      */
     public void setSelectionMode() {
         currentMode = Mode.Select;
@@ -335,33 +373,33 @@ public class UMLArea extends Pane {
     }
 
     /**
+     * Creates a new UMLClassBox at a given set of local coordinates
+     * and selects it.
      *
+     * @param xPos The local x-position to place the UMLClassBox at.
+     * @param yPos The local y-position to place the UMLClassBox at.
      */
-    private void newLine(){
-        Relationship rel = new Relationship(lineParent1, lineParent2);
-        //base on switch value
-        switch (lineType){
-            case 0:
-                rel.setArrowShape();
-                break;
-            case 1:
-                rel.setEmptyArrowShape();
-                break;
-            case 2:
-                rel.setEmptyArrowShape();
-                rel.setDashedLine(true);
-                break;
-            case 3:
-                rel.setArrowShape();
-                rel.setDashedLine(true);
-                break;
-            case 4:
-                rel.setEmptyDiamondShape();
-                break;
-            case 5:
-                rel.setFullDiamondShape();
-                break;
-        }
+    private void newBox (double xPos, double yPos){
+        int boxWidth = 120;
+        int boxHeight = 160;
+        UMLClassBox myBox = new UMLClassBox(boxWidth, boxHeight);
+        getChildren().addAll(myBox);
+        boxes.add(myBox);
+        myBox.setTranslateX(xPos - boxWidth/2);
+        myBox.setTranslateY(yPos - boxHeight/2);
+
+        clearSelections();
+        myBox.setSelected(true);
+        requestFocus();
+    }
+
+    /**
+     * Creates a new Relationship based on the two UMLClassBoxes
+     * selected as source and destination, and the RelationshipType
+     * specified.
+     */
+    private void newLine (){
+        Relationship rel = new Relationship (lineParent1, lineParent2, lineType);
 
         //todo: what is the logical depth ordering?
 
@@ -371,26 +409,8 @@ public class UMLArea extends Pane {
     }
 
     /**
-     *
-     * @param xpos
-     * @param ypos
-     */
-    private void newBox(double xpos, double ypos){
-        int boxWidth = 120;
-        int boxHeight = 160;
-        UMLClassBox myBox = new UMLClassBox(boxWidth, boxHeight);
-        getChildren().addAll(myBox);
-        boxes.add(myBox);
-        myBox.setTranslateX(xpos - boxWidth/2);
-        myBox.setTranslateY(ypos - boxHeight/2);
-
-        clearSelections();
-        myBox.setSelected(true);
-        requestFocus();
-    }
-
-    /**
-     *
+     * Deselects every UMLClassBox currently selected within the
+     * UMLArea.
      */
     public void clearSelections(){
         for (UMLClassBox n : boxes){
@@ -399,12 +419,12 @@ public class UMLArea extends Pane {
     }
 
     /**
-     * Initializes new selectionArea Rectangle with position, width, and height
-     * Initialized selectionArea will have a black, dashed border
-     * @param xPos X coordinate of top left corner
-     * @param yPos Y coordinate of top left corner
-     * @param width Rectangle width
-     * @param height Rectangle height
+     * Creates a Rectangle representing the selection area.
+     *
+     * @param xPos Local x-position of top left corner.
+     * @param yPos Local y-position of top left corner.
+     * @param width Width of the selection area.
+     * @param height Height of the selection area.
      */
     private void initSelectionArea(double xPos, double yPos, double width, double height) {
         selectionArea = new Rectangle(xPos, yPos, width, height);
@@ -414,11 +434,13 @@ public class UMLArea extends Pane {
     }
 
     /**
-     * Modifies selectionArea's position in parent, width, and height
-     * @param xPos New X coordinate of top left corner
-     * @param yPos New Y coordinate of top left corner
-     * @param width New width
-     * @param height New height
+     * Modifies the selection area's local position, width,
+     * and height.
+     *
+     * @param xPos New local x-position of top left corner.
+     * @param yPos New local y-position of top left corner.
+     * @param width New width of the selection area.
+     * @param height New height of the selection area.
      */
     private void setSelectionArea(double xPos, double yPos, double width, double height) {
         selectionArea.setX(xPos);
@@ -428,18 +450,16 @@ public class UMLArea extends Pane {
     }
 
     /**
-     * Selects instances of UMLClassBox class, if any, in bounds given as arguments
-     * Preconditions:
-     *   * minX <= maxX
-     *   * minY <= maxY
-     * Postcondition: any UMLClassBox instances occupying space in coordinates
-     * ([minX, maxX], [minY, maxY]) within parent are now selected
-     * @param minX Minimum parent x coordinate
-     * @param maxX Maximum parent x coordinate
-     * @param minY Minimum parent y coordinate
-     * @param maxY Maximum parent y coordinate
+     * Selects instances of UMLClassBox class, if any, in the bounds
+     * of the selection area.
      */
-    private void selectBoxesInArea(double minX, double maxX, double minY, double maxY) {
+    private void selectBoxesInArea() {
+        //TODO: the selection area doesn't appear precisely at the mouseclick.
+
+        double selectionLeft = selectionArea.getX();
+        double selectionRight = selectionLeft + selectionArea.getWidth();
+        double selectionTop = selectionArea.getY();
+        double selectionBottom = selectionTop + selectionArea.getHeight();
 
         for (UMLClassBox n : boxes) {
 
@@ -448,7 +468,7 @@ public class UMLArea extends Pane {
             double topBound = n.getTopAnchorPoint().getY();
             double bottomBound = n.getBottomAnchorPoint().getY();
 
-            if (leftBound <= maxX && rightBound >= minX && topBound <= maxY && bottomBound >= minY) {
+            if (leftBound <= selectionRight && rightBound >= selectionLeft && topBound <= selectionBottom && bottomBound >= selectionTop) {
                 n.setSelected(true);
             } else {
                 n.setSelected(false);

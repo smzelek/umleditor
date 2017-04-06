@@ -1,26 +1,21 @@
-import com.canisdev.Main;
 import com.canisdev.UMLClassBox;
-import javafx.scene.Parent;
+import com.canisdev.UMLEditor;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.junit.Before;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.service.query.NodeQuery;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.testfx.api.FxAssert.verifyThat;
 
 /**
  * Created by Kelez on 4/4/2017.
  */
 public class SimpleBoxTests extends ApplicationTest {
 
-    Main.UMLEditor root;
+    UMLEditor root;
     @Override
     public void start(Stage stage) throws Exception {
-        root = new Main.UMLEditor();
+        root = new UMLEditor();
         Scene scene = new Scene(root, 400,450);
         stage.setResizable(true);
         stage.setScene(scene);
