@@ -1,11 +1,21 @@
-.text-field {
+#umlArea {
+  -fx-background-color: white;
+  -fx-background-image: url("img/umlArea_background.png");
+  -fx-background-position: center;
+  -fx-background-repeat: no-repeat;
+  -fx-background-size: 600 600;
 }
 
 #button-tray {
-  -fx-background-color: #A0A0A0;
-  -fx-border-color: black;
   -fx-border-width: 1 0 0 0;
-  -fx-border-style: solid;
+  -fx-background-color:
+          linear-gradient(#f2f2f2, #d6d6d6),
+          linear-gradient(#fcfcfc 0%, #d9d9d9 20%, #d6d6d6 100%),
+          linear-gradient(#dddddd 0%, #f6f6f6 50%);
+  -fx-background-radius: 8,7,6;
+  -fx-background-insets: 0,1,2;
+  -fx-text-fill: black;
+  -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
 }
 
 #resize-circle {
@@ -14,27 +24,33 @@
   -fx-stroke-width:2px;
 }
 
-#uml-class-box-frame{
-}
-
 #uml-class-box-contents{
-  -fx-background-color: #C0C0C0;
-  -fx-border-style: solid;
-  -fx-border-width: 1px;
-  -fx-border-color: black;
+  -fx-background-color: whitesmoke;
+  -fx-font-size: 14;
+  -fx-font-family: sans-serif;
 }
 
 .menu-bar {
+  -fx-background-color:
+          linear-gradient(#f2f2f2, #d6d6d6),
+          linear-gradient(#fcfcfc 0%, #d9d9d9 20%, #d6d6d6 100%),
+          linear-gradient(#dddddd 0%, #f6f6f6 50%);
+  -fx-background-radius: 8,7,6;
+  -fx-background-insets: 0,1,2;
+  -fx-text-fill: black;
+  -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
 }
 
 .menu-button {
+  -fx-font-size: 14;
 }
 
 .menu-button:hover {
+  -fx-background-color: darkcyan;
+  -fx-text-fill: lightcyan;
 }
 
-.menu-button .label {
-}
-
-.menu-item .label {
+.menu-item:hover {
+  -fx-background-color: darkcyan;
+  -fx-text-fill: lightcyan;
 }
