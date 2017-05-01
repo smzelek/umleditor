@@ -1,9 +1,16 @@
 package com.canisdev;
 
 import javafx.application.Application;
+import javafx.print.PageLayout;
+import javafx.print.PrinterJob;
+import javafx.print.Printer;
+import javafx.print.Paper;
+import javafx.print.PageOrientation;
+import javafx.scene.Node;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
+import javafx.scene.transform.Scale;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
