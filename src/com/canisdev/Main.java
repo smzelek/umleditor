@@ -16,7 +16,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage){
         primaryStage.setTitle("CANIS UML Editor 1.0");
-        Parent root = new UMLEditor();
+        Parent root = new UMLEditor(primaryStage);
         Scene scene = new Scene(root, 400,450);
         primaryStage.setResizable(true);
         primaryStage.setScene(scene);

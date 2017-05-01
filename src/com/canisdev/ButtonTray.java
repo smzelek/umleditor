@@ -12,7 +12,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.Tooltip;
 
 /**
- * TODO
+ * Button tray spans the bottom of the application, and has a button for
+ * each element a user can create, and allows for the selection of multiple
+ * elements via a selection box.
  */
 public class ButtonTray extends HBox {
 

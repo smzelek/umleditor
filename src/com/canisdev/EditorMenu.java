@@ -1,31 +1,44 @@
 package com.canisdev;
 
+import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
+import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * A menu that spans the top of the application, allowing
- * manipulation of general settings.
- * TODO
+ * manipulation of general settings and file manipulation
+ * via drop down menus.
  */
 public class EditorMenu extends MenuBar {
 
+    private Stage stage;
     private String style1url = Main.class.getResource("Style1.css").toExternalForm();
     private String style2url = Main.class.getResource("Style2.css").toExternalForm();
     private ArrayList<String> styleOptions;
+    private UMLArea umlArea;
 
     /**
      * Creates an EditorMenu.
      */
-    public EditorMenu (){
+    public EditorMenu (Stage stage, UMLArea umlArea){
         super();
+
+        this.umlArea = umlArea;
+        this.stage = stage;
 
         styleOptions = new ArrayList<>();
         styleOptions.add(style1url);
@@ -57,18 +70,28 @@ public class EditorMenu extends MenuBar {
         MenuItem newFile = new MenuItem("New");
         newFile.setGraphic(newFileView);
         fileButton.getItems().addAll(newFile);
+        newFile.setOnAction(e -> {
+            Platform.runLater(() -> new Main().start(new Stage()));
+        });
 
         MenuItem openFile = new MenuItem("Open...");
         openFile.setGraphic(openFileView);
         fileButton.getItems().addAll(openFile);
+        openFile.setOnAction(e -> {
+            openFileDialog();
+        });
 
         MenuItem saveFile = new MenuItem("Save");
         saveFile.setGraphic(saveView);
         fileButton.getItems().addAll(saveFile);
 
+        saveFile.setOnAction(e -> {
+            saveFileDialog();
+        });
+
         MenuItem settings = new MenuItem("Settings");
         settings.setGraphic(settingsView);
-        fileButton.getItems().addAll(settings);
+        //fileButton.getItems().addAll(settings);
 
         MenuItem exit = new MenuItem("Exit");
         exit.setGraphic(exitView);
@@ -108,7 +131,109 @@ public class EditorMenu extends MenuBar {
         //**********************************************
 
 
-        getMenus().addAll(fileButton, menuEdit, menuView);
+        getMenus().addAll(fileButton, menuView);
+    }
+
+    public void openFileDialog () {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("UML Files", "*.uml"));
+
+        try {
+            File openedFile = fileChooser.showOpenDialog(stage);
+
+            if (openedFile == null){
+                return;
+            }
+            FileInputStream file = new FileInputStream(openedFile);
+
+            UMLArea umlArea = ((UMLEditor) this.getParent()).getUmlArea();
+            ObjectInputStream restore = new ObjectInputStream(file);
+            umlArea.clear();
+
+            HashMap<Integer, UMLClassBox> boxLookup = new HashMap<>();
+
+            int numBoxes = restore.readInt();
+
+            for (int i = 0; i < numBoxes; ++i){
+                UMLClassBox box = umlArea.newBox(0, 0);
+                boxLookup.put(restore.readInt(), box);
+                box.setPrefWidth(restore.readDouble());
+                box.setPrefHeight(restore.readDouble());
+                box.setTranslateX(restore.readDouble());
+                box.setTranslateY(restore.readDouble());
+                box.setNameText((String) restore.readObject());
+                box.setAttributeText((String) restore.readObject());
+                box.setMethodText((String) restore.readObject());
+            }
+
+            int numRelationships = restore.readInt();
+
+            for (int i = 0; i < numRelationships; ++i){
+                Relationship.RelationshipType lineType = (Relationship.RelationshipType) restore.readObject();
+                UMLClassBox source = boxLookup.get(restore.readInt());
+                UMLClassBox destination = boxLookup.get(restore.readInt());
+                Relationship r = umlArea.newLine(source, destination, lineType);
+                r.setStart(restore.readDouble(), restore.readDouble());
+                r.setEnd(restore.readDouble(), restore.readDouble());
+                r.updateShapeTransform();
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveFileDialog() {
+        ArrayList<UMLClassBox> allBoxes = ((UMLEditor) getParent()).getUmlArea().getAllBoxes();
+        ArrayList<Relationship> allLines = ((UMLEditor) getParent()).getUmlArea().getAllLines();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName("untitled.uml");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("UML Files", "*.uml"));
+
+        try {
+            File file = fileChooser.showSaveDialog(stage);
+            if (file == null){
+                return;
+            }
+            String file_name = file.toString();
+            if (!file_name.endsWith(".uml"))
+                file_name += ".uml";
+            file.renameTo(new File (file_name));
+
+            FileOutputStream saveFile = new FileOutputStream(file);
+            ObjectOutputStream saveStream = new ObjectOutputStream(saveFile);
+
+            saveStream.writeInt(allBoxes.size());
+            for (UMLClassBox b : allBoxes){
+                saveStream.writeInt(b.getSaveID());
+                saveStream.writeDouble(b.getWidth());
+                saveStream.writeDouble(b.getHeight());
+                saveStream.writeDouble(b.getTranslateX());
+                saveStream.writeDouble(b.getTranslateY());
+                saveStream.writeObject(b.getNameText());
+                saveStream.writeObject(b.getAttributeText());
+                saveStream.writeObject(b.getMethodText());
+            }
+
+            saveStream.writeInt(allLines.size());
+            for (Relationship r : allLines) {
+                saveStream.writeObject(r.getRelationshipType());
+                saveStream.writeInt(r.getSource().getSaveID());
+                saveStream.writeInt(r.getDestination().getSaveID());
+                saveStream.writeDouble(r.getStartX());
+                saveStream.writeDouble(r.getStartY());
+                saveStream.writeDouble(r.getEndX());
+                saveStream.writeDouble(r.getEndY());
+            }
+
+            saveStream.close();
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -1,5 +1,3 @@
-//TODO: examine states of de/focusing, mouse events, shift click multi-select
-
 package com.canisdev;
 
 import javafx.geometry.Insets;
@@ -13,6 +11,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -23,17 +22,19 @@ import java.util.Arrays;
  *
  * A UMLClassBox may also have relationships to other classes.
  * The UMLArea holds and manipulates a collection of UMLClassBoxes.
- * TODO
  *
  * @see Relationship
  * @see UMLArea
  */
-public class UMLClassBox extends StackPane {
+public class UMLClassBox extends StackPane implements Serializable {
 
     private VBox contents;
     private TextField nameArea;
     private TextArea attributeArea;
     private TextArea methodArea;
+    private static int nextID = 0;
+    private int saveID;
+
     public ResizeNode right, left, topRight, bottomRight, topLeft, bottomLeft, top, bottom;
 
     private double lastMousePosX;
@@ -42,6 +43,22 @@ public class UMLClassBox extends StackPane {
     private final double RESIZE_MARGIN = 5;
     public boolean isSelected;
     private ArrayList<Relationship> dependents;
+
+    public int getSaveID() {
+        return saveID;
+    }
+
+    public String getNameText() {
+        return nameArea.getText();
+    }
+
+    public String getAttributeText() {
+        return attributeArea.getText();
+    }
+
+    public String getMethodText() {
+        return methodArea.getText();
+    }
 
     /**
      * Creates a UMLClassBox based on size parameters. Margins are
@@ -56,6 +73,8 @@ public class UMLClassBox extends StackPane {
 
         width = Math.floor(width);
         height = Math.floor(height);
+        saveID = nextID;
+        nextID++;
 
         dependents = new ArrayList<>();
 
@@ -422,4 +441,17 @@ public class UMLClassBox extends StackPane {
             bottom.setVisible(false);
         }
     }
+
+    public void setNameText (String s){
+        nameArea.setText(s);
+    }
+
+    public void setAttributeText (String s) {
+        attributeArea.setText(s);
+    }
+
+    public void setMethodText (String s) {
+        methodArea.setText(s);
+    }
+
 }

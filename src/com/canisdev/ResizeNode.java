@@ -9,7 +9,6 @@ import javafx.scene.shape.Circle;
  * This scene object appears as a circle and
  * uses custom mouse event handlers to implement resizing
  * its parent UMLClassBox.
- * TODO
  */
 public class ResizeNode extends Circle {
 

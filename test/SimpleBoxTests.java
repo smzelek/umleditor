@@ -15,7 +15,7 @@ public class SimpleBoxTests extends ApplicationTest {
     UMLEditor root;
     @Override
     public void start(Stage stage) throws Exception {
-        root = new UMLEditor();
+        root = new UMLEditor(stage);
         Scene scene = new Scene(root, 400,450);
         stage.setResizable(true);
         stage.setScene(scene);
@@ -30,7 +30,7 @@ public class SimpleBoxTests extends ApplicationTest {
         UMLClassBox umlClassBox = lookup("#uml-class-box-frame").query();
         assertNotNull("Did not create a box", umlClassBox);
         System.out.println("Box created at position (" + umlClassBox.getTranslateX() + ", " + umlClassBox.getTranslateY() + ")");
-        assertEquals("Box not added to umlArea's list", root.umlArea.getChildren().size(), 1);
+        assertEquals("Box not added to umlArea's list", root.getUmlArea().getChildren().size(), 1);
         System.out.println("Box added to umlArea's list");
     }
 

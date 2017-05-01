@@ -12,8 +12,6 @@ import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 
 /**
- * TODO
- *
  * Bidirectional data relationship with a GUI component.
  * The endpoints of a relationship hold a pointer
  * to the relationship, which is used to delete the relationship
@@ -33,6 +31,7 @@ public class Relationship extends Group {
     private Polygon shape;
     private Rotate rzArrowHead;
     private double arrowRotationOffset = 90;
+    private RelationshipType relationshipType;
 
     /**
      * Creates a Relationship with references to both UMLClassBoxes
@@ -46,6 +45,7 @@ public class Relationship extends Group {
 
         this.source = source;
         this.destination = destination;
+        this.relationshipType = relationshipType;
 
         source.addDependentRelationship(this);
         destination.addDependentRelationship(this);
@@ -81,8 +81,7 @@ public class Relationship extends Group {
         }
 
         setEventHandler(AnchorEvent.MOVED, this::handleMove);
-        findClosestAnchorPair();
-        updateShapeTransform();
+        updateLine();
     }
 
     /**
@@ -108,9 +107,14 @@ public class Relationship extends Group {
      */
     private void handleMove(AnchorEvent anchorEvent)
     {
+        updateLine();
+        anchorEvent.consume();
+    }
+
+    public void updateLine()
+    {
         findClosestAnchorPair();
         updateShapeTransform();
-        anchorEvent.consume();
     }
 
     /**
@@ -142,13 +146,39 @@ public class Relationship extends Group {
         path.setEndY(destinationAnchorPoint.getY());
     }
 
+    public double getStartX() {
+        return path.getStartX();
+    }
+
+    public double getStartY() {
+        return path.getStartY();
+    }
+
+    public double getEndX() {
+        return path.getEndX();
+    }
+
+    public double getEndY() {
+        return path.getEndY();
+    }
+
+    public void setEnd(double x, double y){
+        path.setEndX(x);
+        path.setEndY(y);
+    }
+
+    public void setStart(double x, double y){
+        path.setStartX(x);
+        path.setStartY(y);
+    }
+
     /**
      * Updates the arrowhead for this Relationship to ensure
      * that it is at the destination endpoint and that it is
      * properly rotated to align with the line for this
      * Relationship.
      */
-    private void updateShapeTransform(){
+    public void updateShapeTransform(){
         shape.setTranslateX(path.getEndX());
         shape.setTranslateY(path.getEndY());
         double opposite = path.getStartY() - path.getEndY();
@@ -243,5 +273,17 @@ public class Relationship extends Group {
         shape.getTransforms().add(rzArrowHead);
         getChildren().addAll(shape);
         updateShapeTransform();
+    }
+
+    public UMLClassBox getSource() {
+        return source;
+    }
+
+    public UMLClassBox getDestination() {
+        return destination;
+    }
+
+    public RelationshipType getRelationshipType() {
+        return relationshipType;
     }
 }

@@ -4,7 +4,6 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
- * TODO
  * Convenience class for a custom event our scene objects
  * can fire and react to.
  */

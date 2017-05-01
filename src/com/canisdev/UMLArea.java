@@ -13,7 +13,17 @@ import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 
 /**
- * TODO
+ * Class that creates the field within which UMLClassBoxes, and their relationships, can be added and manipulated.
+ * Holds onto created boxes and relationships in ArrayLists, to keep track of all the current nodes.
+ * When a Class Box is deleted, its relationships are deleted with it.
+ *
+ * UMLAreas have several different modes depending on what the user wants to do.
+ * Box Mode: Allows the user to create new Class Boxes.
+ * None    : Allows the user to translate the viewport for the UMLArea.
+ * Line    : Allows the user to create new relationships
+ * Select  : Allows the user to select any Class Box within its area.
+ *
+ * Interactions are handled through various mouse and keyboard events.
  */
 public class UMLArea extends Pane {
     //TODO: when making lines, send its parent/child to front of UMLArea
@@ -379,7 +389,7 @@ public class UMLArea extends Pane {
      * @param xPos The local x-position to place the UMLClassBox at.
      * @param yPos The local y-position to place the UMLClassBox at.
      */
-    private void newBox (double xPos, double yPos){
+    public UMLClassBox newBox (double xPos, double yPos){
         int boxWidth = 120;
         int boxHeight = 160;
         UMLClassBox myBox = new UMLClassBox(boxWidth, boxHeight);
@@ -391,6 +401,8 @@ public class UMLArea extends Pane {
         clearSelections();
         myBox.setSelected(true);
         requestFocus();
+
+        return myBox;
     }
 
     /**
@@ -400,12 +412,17 @@ public class UMLArea extends Pane {
      */
     private void newLine (){
         Relationship rel = new Relationship (lineParent1, lineParent2, lineType);
-
-        //todo: what is the logical depth ordering?
-
         getChildren().addAll(rel);
         relationships.add(rel);
         rel.toBack();
+    }
+
+    public Relationship newLine(UMLClassBox source, UMLClassBox destination, Relationship.RelationshipType lineType){
+        Relationship rel = new Relationship(source, destination, lineType);
+        getChildren().addAll(rel);
+        relationships.add(rel);
+        rel.toBack();
+        return rel;
     }
 
     /**
@@ -475,5 +492,25 @@ public class UMLArea extends Pane {
             }
 
         }
+    }
+
+    public void clear(){
+        ArrayList<UMLClassBox> boxCopy = new ArrayList<>(boxes);
+        for (UMLClassBox n : boxCopy){
+            removeDependentRelationships(n);
+            boxes.remove(n);
+            getChildren().remove(n);
+
+            requestFocus();
+            getScene().setCursor(Cursor.DEFAULT);
+        }
+    }
+
+    public ArrayList<UMLClassBox> getAllBoxes() {
+        return boxes;
+    }
+
+    public ArrayList<Relationship> getAllLines() {
+        return relationships;
     }
 }
